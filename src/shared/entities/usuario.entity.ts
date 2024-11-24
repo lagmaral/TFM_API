@@ -28,4 +28,7 @@ export class UsuarioEntity extends BaseEntity {
   @Column({ length: 200, nullable: true })
   apellido2: string;
 
+  @Column('timestamp')
+  fechanacimiento: Date;
+
 }

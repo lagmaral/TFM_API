@@ -10,6 +10,7 @@ import { UsuarioDTO } from 'src/shared/dtos/usuario.dto';
 import * as crypto from 'crypto';
 import { UsuarioMapper } from 'src/shared/mappers/usuario.mapper';
 import { JwtService } from '@nestjs/jwt/dist/jwt.service';
+import { AuthDTO } from 'src/shared/dtos/auth.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -37,7 +38,6 @@ export class UsuariosService {
     return hash; // Retorna un hash de 64 caracteres*/
     const payload = { sub: telefono }; // Subjet puede ser el ID del usuario o algún identificador único
     return this.jwtService.sign(payload); // Usa el JwtService de NestJS para generar el token
-  
   }
 
   // Validar el password comparándolo con el almacenado
@@ -88,11 +88,11 @@ export class UsuariosService {
   }
 
   // Método de login
-  async doLogin(usuarioDTO: UsuarioDTO): Promise<UsuarioDTO> {
-    const { username, password } = usuarioDTO;
+  async doLogin(authDto: AuthDTO): Promise<UsuarioDTO> {
+    //const { username, password } = authDto;
 
     // Buscar usuario por username (puedes usar email si prefieres)
-    const user = await this.usuarioRepository.findByUsername(username);
+    const user = await this.usuarioRepository.findByUsername(authDto.email);
 
     // Si el usuario no existe, lanzar excepción
     if (!user) {
@@ -100,7 +100,10 @@ export class UsuariosService {
     }
 
     // Verificar si la contraseña coincide
-    const isPasswordValid = this.validatePassword(password, user.password);
+    const isPasswordValid = this.validatePassword(
+      authDto.password,
+      user.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Contraseña incorrecta');
     }
@@ -112,6 +115,31 @@ export class UsuariosService {
     await this.usuarioRepository.update(user.id, { token });
 
     return await this.usuarioRepository.findById(user.id);
+  }
 
+  async updateUser(token: string, input: UsuarioDTO): Promise<UsuarioDTO> {
+    // 1. Comprobar si el usuario existe por el token
+    const user = await this.usuarioRepository.findByToken(token);
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    // 2. Verificar si el teléfono existe en la base de datos
+    const existingUserWithPhone = await this.usuarioRepository.findByPhone(input.telefono);
+    if (existingUserWithPhone && existingUserWithPhone.id !== user.id) {
+      throw new ConflictException('El número de teléfono ya está asociado a otro usuario');
+    }
+
+    // 3. Modificar el usuario con los nuevos datos
+    // Si el teléfono es válido o no se modifica, se puede actualizar
+    const updatedUser = UsuarioMapper.toEntity(input);
+    updatedUser.id = user.id;  // Mantener el ID del usuario actual
+    updatedUser.token = user.token;  // Mantener el mismo token si es necesario
+
+    // Actualiza la base de datos con los nuevos datos del usuario
+    const savedUser = await this.usuarioRepository.update(user.id, updatedUser);
+
+    // Devuelve el DTO actualizado del usuario
+    return await this.usuarioRepository.findById(user.id);
   }
 }

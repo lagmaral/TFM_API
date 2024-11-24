@@ -1,6 +1,5 @@
-import { IsString, Length, IsEmail } from 'class-validator';
+import { IsString, Length, IsEmail, IsDate } from 'class-validator';
 import { BaseDTO } from './base.dto';
-import { PersonaDTO } from './persona.dto';
 
 export class UsuarioDTO extends BaseDTO {
   @IsString()
@@ -34,4 +33,7 @@ export class UsuarioDTO extends BaseDTO {
   @IsString()
   @Length(0, 200)
   apellido2: string;
+
+  @IsDate()
+  fechanacimiento: Date;
 }

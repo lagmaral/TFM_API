@@ -13,6 +13,7 @@ export class UsuarioMapper {
     usuario.nombre = usuarioDTO.nombre;
     usuario.apellido1 = usuarioDTO.apellido1;
     usuario.apellido2 = usuarioDTO.apellido2;
+    usuario.fechanacimiento = usuarioDTO.fechanacimiento;
     return usuario;
   }
 
@@ -27,6 +28,7 @@ export class UsuarioMapper {
     usuarioDTO.nombre = usuario.nombre;
     usuarioDTO.apellido1 = usuario.apellido1;
     usuarioDTO.apellido2 = usuario.apellido2;
+    usuarioDTO.fechanacimiento = usuario.fechanacimiento;
     return usuarioDTO;
   }
 }

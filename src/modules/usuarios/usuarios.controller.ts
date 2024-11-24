@@ -12,6 +12,7 @@ import { LoggerService } from 'src/shared/services/logger.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsuariosService } from './usuarios.service';
 import { UsuarioDTO } from 'src/shared/dtos/usuario.dto';
+import { AuthDTO } from 'src/shared/dtos/auth.dto';
 
 @ApiTags('usuarios') // Etiqueta para el grupo
 @Controller('usuarios')
@@ -34,7 +35,6 @@ export class UsuariosController {
     status: 409,
     description: 'Usuario no logado con el token',
     schema: {
-      // Ajuste para conflicto, ya que no devuelve un UsuarioDTO
       example: {
         statusCode: 409,
         message: 'Usuario no logado con el token',
@@ -62,7 +62,7 @@ export class UsuariosController {
   @ApiOperation({ summary: 'Registra un nuevo usuario' })
   @ApiBody({
     type: UsuarioDTO,
-    description: 'Registra un nuevo usuario si el telefono no existe',
+    description: 'Registra un nuevo usuario si el teléfono no existe',
     required: true,
   })
   @ApiResponse({
@@ -105,8 +105,8 @@ export class UsuariosController {
     status: 401,
     description: 'Credenciales incorrectas',
   })
-  async doLogin(@Body() usuarioDTO: UsuarioDTO): Promise<UsuarioDTO> {
-    return await this.usuarioService.doLogin(usuarioDTO);
+  async doLogin(@Body() authDto: AuthDTO): Promise<UsuarioDTO> {
+    return await this.usuarioService.doLogin(authDto);
   }
 
   @Post('doLogout/:username')
@@ -114,7 +114,7 @@ export class UsuariosController {
   @ApiResponse({
     status: 200,
     description: 'Sesión cerrada correctamente',
-    type: Object,
+    type: UsuarioDTO, // Establecemos el tipo correcto como UsuarioDTO vacío
   })
   @ApiResponse({
     status: 404,
@@ -122,13 +122,17 @@ export class UsuariosController {
   })
   async doLogout(
     @Param('username') username: string,
-  ): Promise<{ statusCode: number; message: string }> {
+  ): Promise<{ statusCode: number; message: string; user?: UsuarioDTO }> {
     try {
       // Llama al servicio de logout para eliminar el token
       await this.usuarioService.doLogout(username);
 
-      // Si el logout es exitoso, retorna el mensaje con statusCode
-      return { statusCode: 200, message: 'Sesión cerrada correctamente' };
+      // Si el logout es exitoso, retorna un UsuarioDTO vacío
+      return {
+        statusCode: 200,
+        message: 'Sesión cerrada correctamente',
+        user: null,  // En lugar de UsuarioDTO vacío, simplemente devolvemos null
+      };
     } catch (error) {
       // Si el error es de usuario no encontrado, responde con 404
       if (error instanceof NotFoundException) {
@@ -138,6 +142,42 @@ export class UsuariosController {
         };
       }
       // Lanza cualquier otro error no esperado
+      throw error;
+    }
+  }
+
+  @Put(':token')
+  @ApiOperation({ summary: 'Modificar los datos de un usuario' })
+  @ApiBody({
+    type: UsuarioDTO,
+    description: 'Cambia los datos de un usuario',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario modificado exitosamente',
+    type: UsuarioDTO,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Usuario existente',
+    type: UsuarioDTO,
+  })
+  async modifyUser(@Param('token') token: string, @Body() usuarioData: UsuarioDTO) {
+    try {
+      const updatedUser = await this.usuarioService.updateUser(token, usuarioData);
+      return {
+        statusCode: 200,
+        message: 'Usuario modificado exitosamente',
+        data: updatedUser,
+      };
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        return {
+          statusCode: 409,
+          message: error.message,
+        };
+      }
       throw error;
     }
   }
