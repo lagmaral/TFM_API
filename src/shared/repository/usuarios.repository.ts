@@ -42,7 +42,7 @@ export class UsuarioRepository extends BaseRepository<
 
   async findByUsername(username: string): Promise<UsuarioDTO | null> {
     const entity = await this.repository.findOne({
-      where: { username } as any,
+      where: { email: username } as any,
     });
     return entity ? UsuarioMapper.toDTO(entity) : null; // Transformar a DTO
   }

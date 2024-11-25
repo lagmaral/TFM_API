@@ -89,8 +89,6 @@ export class UsuariosService {
 
   // Método de login
   async doLogin(authDto: AuthDTO): Promise<UsuarioDTO> {
-    //const { username, password } = authDto;
-
     // Buscar usuario por username (puedes usar email si prefieres)
     const user = await this.usuarioRepository.findByUsername(authDto.email);
 

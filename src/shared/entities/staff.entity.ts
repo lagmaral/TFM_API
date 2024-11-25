@@ -15,7 +15,7 @@ export class StaffEntity extends BaseEntity {
   @Column({ default: false })
   admin: boolean;
 
-  @Column('timestamp')
+  @Column({ type: 'date'})
   fechanacimiento: Date;
 
   @ManyToOne(() => PersonaEntity)

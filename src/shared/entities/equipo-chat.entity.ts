@@ -7,7 +7,7 @@ export class EquipoChatEntity extends BaseEntity {
   @JoinColumn({ name: 'idusuario' })
   usuario: UsuarioEntity;
 
-  @Column('timestamp')
+  @Column({ type: 'date'})
   fechamensaje: Date;
 
   @Column('text')

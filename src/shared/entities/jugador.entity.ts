@@ -6,7 +6,7 @@ import { BaseEntity } from './base.entity';
 
 @Entity('jugador')
 export class JugadorEntity extends BaseEntity{
-  @Column('timestamp')
+  @Column({ type: 'date'})
   fechaNacimiento: Date;
 
   @ManyToOne(() => PosicionEntity)

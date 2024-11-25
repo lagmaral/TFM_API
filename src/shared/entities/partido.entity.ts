@@ -12,7 +12,7 @@ export class PartidoEntity extends BaseEntity {
   @Column({ default: false })
   amistoso: boolean;
 
-  @Column('timestamp')
+  @Column({ type: 'date'})
   fecha: Date;
 
   @Column({ length: 100 })

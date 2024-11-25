@@ -9,10 +9,10 @@ export class NoticiaEntity extends BaseEntity {
   @Column('text')
   cuerpo: string;
 
-  @Column('timestamp')
+  @Column({ type: 'date'})
   fechaalta: Date;
 
-  @Column('timestamp')
+  @Column({ type: 'date'})
   fechapublicacion: Date;
 
   @Column({ default: false })

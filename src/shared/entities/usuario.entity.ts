@@ -1,9 +1,10 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { PersonaEntity } from './persona.entity';
+import { Entity, Column } from 'typeorm';
 import { BaseEntity } from './base.entity';
+
+
+
 @Entity('usuario')
 export class UsuarioEntity extends BaseEntity {
-
   @Column({ length: 12, unique: true })
   telefono: string;
 
@@ -28,7 +29,6 @@ export class UsuarioEntity extends BaseEntity {
   @Column({ length: 200, nullable: true })
   apellido2: string;
 
-  @Column('timestamp')
+  @Column({ type: 'date'})
   fechanacimiento: Date;
-
 }
