@@ -1,5 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { PersonaEntity } from './persona.entity';
+import { Entity, Column } from 'typeorm';
 import { BaseEntity } from './base.entity';
 @Entity('staff')
 export class StaffEntity extends BaseEntity {
@@ -18,7 +17,12 @@ export class StaffEntity extends BaseEntity {
   @Column({ type: 'date'})
   fechanacimiento: Date;
 
-  @ManyToOne(() => PersonaEntity)
-  @JoinColumn({ name: 'idpersona' })
-  persona: PersonaEntity;
+  @Column({ length: 100, nullable: true })
+  nombre: string;
+
+  @Column({ length: 200, nullable: true })
+  apellido1: string;
+
+  @Column({ length: 200, nullable: true })
+  apellido2: string;
 }

@@ -31,7 +31,10 @@ export abstract class BaseRepository<Entity, OutputDTO, InputDTO> {
     id: number,
     relations: string[] = [],
   ): Promise<OutputDTO | null> {
-    const entity = await this.repository.findOne({ where: { id } as any , relations });
+    const entity = await this.repository.findOne({
+      where: { id } as any,
+      relations,
+    });
     return entity ? this.toDTOMapper(entity) : null; // Transformar a DTO
   }
 

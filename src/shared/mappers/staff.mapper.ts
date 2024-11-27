@@ -10,6 +10,9 @@ export class StaffMapper {
     staff.foto = staffDTO.foto;
     staff.admin = staffDTO.admin;
     staff.fechanacimiento = staffDTO.fechanacimiento;
+    staff.nombre = staffDTO.nombre;
+    staff.apellido1 = staffDTO.apellido1;
+    staff.apellido2 = staffDTO.apellido2;
     return staff;
   }
 
@@ -21,6 +24,9 @@ export class StaffMapper {
     staffDTO.foto = staff.foto;
     staffDTO.admin = staff.admin;
     staffDTO.fechanacimiento = staff.fechanacimiento;
+    staffDTO.nombre = staff.nombre;
+    staffDTO.apellido1 = staff.apellido1;
+    staffDTO.apellido2 = staff.apellido2;
     return staffDTO;
   }
 }
