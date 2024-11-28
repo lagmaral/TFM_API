@@ -15,6 +15,7 @@ import { LoggingMiddleware } from './middleware/logging.middleware';
 import { LoggerService } from './shared/services/logger.service';
 import { EquipoModule } from './modules/equipo/equipo.module';
 import { UsuariosModule } from './modules/usuarios/usuarios.module';
+import { StaffModule } from './modules/staff/staff.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { UsuariosModule } from './modules/usuarios/usuarios.module';
     //UsersModule,
     TemporadaModule,
     EquipoModule,
-    UsuariosModule /*,
+    UsuariosModule ,
+    StaffModule/*
     CategoriesModule,
     PostsModule,
     AuthModule,*/,

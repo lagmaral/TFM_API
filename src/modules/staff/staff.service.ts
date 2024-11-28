@@ -81,14 +81,15 @@ export class StaffService {
     const keyPart1 = apellido1.substring(0, 3).toLowerCase(); // Primeros 3 caracteres de apellido1
     const keyPart2 = apellido2.substring(0, 3).toLowerCase(); // Primeros 3 caracteres de apellido2
     const keyPart3 = nombre.substring(0, 2).toLowerCase(); // Primeros 2 caracteres del nombre
-
-    // Formatear la fecha de nacimiento en formato YYYYMMDD
-    const birthDate = staffDTO.fechanacimiento;
-    const formattedDate = birthDate
-      ? `${birthDate.getFullYear()}${String(birthDate.getMonth() + 1).padStart(2, '0')}${String(birthDate.getDate()).padStart(2, '0')}`
-      : '';
-
+    const formattedDate = this.formatBirthDate(new Date(staffDTO.fechanacimiento));
     return `${keyPart1}${keyPart2}${keyPart3}${formattedDate}`; // Concatenar partes para formar el internalKey
+  }
+
+  formatBirthDate(birthDate: Date | null | undefined): string {
+    this.logger.log(typeof birthDate)
+    if (!birthDate) return '';
+    
+    return `${birthDate.getFullYear()}${String(birthDate.getMonth() + 1).padStart(2, '0')}${String(birthDate.getDate()).padStart(2, '0')}`;
   }
 
   async findPaginated(
