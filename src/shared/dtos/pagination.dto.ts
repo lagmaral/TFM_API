@@ -11,4 +11,5 @@ export class PaginationDto {
   @IsInt()
   @Min(1)
   limit?: number = 50; // Default to limit of 50
+
 }

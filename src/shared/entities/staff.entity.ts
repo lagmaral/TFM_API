@@ -11,7 +11,13 @@ export class StaffEntity extends BaseEntity {
   @Column({ length: 500, nullable: true })
   foto: string;
 
-  @Column({ default: false })
+  @Column({
+    type: "boolean",
+    transformer: {
+        to: (value: boolean) => value, // Transformación al guardar
+        from: (value: any) => value === true || value === 'true', // Transformación al recuperar
+    },
+  } )
   admin: boolean;
 
   @Column({ type: 'date'})
