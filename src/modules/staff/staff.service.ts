@@ -3,17 +3,23 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/shared/dtos/pagination.dto';
 import { StaffDTO } from 'src/shared/dtos/staff.dto';
+import { EquipoStaffEntity } from 'src/shared/entities/equipo-staff.entity';
 import { StaffMapper } from 'src/shared/mappers/staff.mapper';
+import { EquipoStaffRepository } from 'src/shared/repository/equipo-staff.repository';
+
 import { StaffRepository } from 'src/shared/repository/staff.repository';
 import { LoggerService } from 'src/shared/services/logger.service';
-import { Like, MoreThan } from 'typeorm';
+import { Like, MoreThan, Repository } from 'typeorm';
 
 @Injectable()
 export class StaffService {
   constructor(
     private staffRepository: StaffRepository,
+    @InjectRepository(EquipoStaffRepository)
+    private readonly equipoStaffRepository: EquipoStaffRepository,
     private readonly logger: LoggerService,
   ) {
     logger.setContext('StaffService');
@@ -102,47 +108,11 @@ export class StaffService {
     return new Date(Date.UTC(year, month, day));
   }
 
-  /*async findPaginated(
-    filters: any,
-    paginationDto: PaginationDto,
-  ): Promise<{ data: StaffDTO[]; total: number }> {
-    const { page, limit } = paginationDto;
-  
-    this.logger.log('findPaginated ' + JSON.stringify(paginationDto));
-    this.logger.log('findPaginated filters ' + JSON.stringify(filters));
-  
-    let whereClause = {};
-    if (filters && Object.keys(filters).length > 0) {
-      whereClause = Object.keys(filters).reduce((acc, key) => {
-        if (filters[key]) {
-          acc[key] = Like(`%${filters[key]}%`);
-        }
-        return acc;
-      }, {});
-    }
-  
-    const [result, total] = await this.staffRepository.findAndCount({
-      where: whereClause,
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-  
-    return {
-      data: result.map((staff) => StaffMapper.toDTO(staff)),
-      total,
-    };
-  }*/
-
   async findPaginated(
     filters: any,
     paginationDto: PaginationDto,
   ): Promise<{ data: StaffDTO[]; total: number }> {
     const { page, limit } = paginationDto;
-    /*if (filters && Object.keys(filters).length == 0) {
-      filters = {
-        id: MoreThan(0)
-      }
-    }*/
     this.logger.log('findPaginated'+JSON.stringify(paginationDto));
     this.logger.log('findPaginated'+JSON.stringify(filters));
     const [result, total] = await this.staffRepository.findAndCount({
@@ -155,5 +125,10 @@ export class StaffService {
       data: result.map((staff) => StaffMapper.toDTO(staff)), // Map results to DTOs
       total,
     };
+  }
+
+  async deleteStaff(id: number): Promise<boolean> {
+    await this.equipoStaffRepository.deleteStaffId(id);
+    return await this.staffRepository.deleteById(id);
   }
 }

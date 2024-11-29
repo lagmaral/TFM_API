@@ -60,6 +60,7 @@ export abstract class BaseRepository<Entity, OutputDTO, InputDTO> {
   }
 
   async deleteById(id: number): Promise<boolean> {
+
     const result = await this.repository.delete(id);
     return result.affected > 0;
   }

@@ -122,7 +122,7 @@ export class StaffController {
     return this.staffService.findById(id);
   }
 
-  @Put(':id')
+@Put(':id')
 @ApiOperation({ summary: 'Actualizar un miembro del staff existente' })
 @ApiConsumes('multipart/form-data') // Indica que el endpoint consume FormData
 @ApiBody({
@@ -185,6 +185,26 @@ async updateStaff(@Param('id') id: number, @Body() object: StaffDTO, @UploadedFi
   }
 }
 
+  @Put(':id')
+  @ApiOperation({ summary: 'Elimina un miembro del staff existente' })
+  @ApiResponse({
+    status: 200,
+    description: 'Miembro del staff eliminado exitosamente',
+    type: StaffDTO,
+  })
+  async deleteStaff(@Param('id') id: number) {
+  
+    // Intentar persistir el objeto en la base de datos
+    try {
+      
+      //const savedObject = await this.staffService.updateStaff(id, object); // Método para guardar el objeto
+  
+ 
+    } catch (error) {
+      // Manejo de error si la persistencia falla
+      throw new Error('Error al guardar el objeto: ' + error.message);
+    }
+  }
   
 }
 
