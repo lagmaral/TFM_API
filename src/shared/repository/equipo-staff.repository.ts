@@ -34,5 +34,16 @@ export class EquipoStaffRepository extends BaseRepository<
       const result = await this.repository.remove(equipoStaffs);
       return result.length > 0;
   }
+
+  async deleteEquipoStaffByTeamId(id: number): Promise<boolean>  {
+    const equipoStaffs = await this.repository.find({
+      where: {
+        equipo: { id: id }, // Asegúrate de que 'id' es el nombre correcto del campo en StaffEntity
+      }
+    });
+    
+    const result = await this.repository.remove(equipoStaffs);
+    return result.length > 0;
+  }
   
 }

@@ -17,12 +17,20 @@ export class ConfigurableService {
     };*/
   }
 
+  static getURLStaffPath(): string{
+    return "/pauldarrak/photos/staff/";
+  }
+
+  static getURLPlayersPath(): string{
+    return "/pauldarrak/photos/players/";
+  }
+
   static getConfigStaffPath(): string{
     return ConfigurableService.folderPath;
   }
 
   static getConfigPlayerPath(): string{
-    return ConfigurableService.folderPath;
+    return ConfigurableService.playerPath;
   }
 
   private getStaffPath(): string {

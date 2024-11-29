@@ -18,6 +18,16 @@ export class EquipoEntity extends BaseEntity {
   @Column()
   orden: number;
 
-  @Column({ default: false })
+  @Column({
+    type: "boolean",
+    transformer: {
+        to: (value: boolean) => value, // Transformación al guardar
+        from: (value: any) => value === true || value === 'true', // Transformación al recuperar
+    },
+  } )
   activo: boolean;
+
+  @Column('text')
+  internalkey: string;
+  
 }

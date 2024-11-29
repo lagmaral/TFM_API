@@ -1,8 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { StaffDTO } from "../dtos/staff.dto";
+import { EquipoDTO } from "../dtos/equipo.dto";
 
 @Injectable()
 export class UtilsService {
+
+      static calculateTeamKey(equipoTO: EquipoDTO): string {
+        const descripcion = equipoTO.descripcion || '';
+        const nombre = equipoTO.nombre || '';
+    
+        // Obtener los primeros caracteres
+        const keyPart1 = descripcion.substring(0, 5).toLowerCase(); // Primeros 3 caracteres de apellido1    
+        const keyPart2 = nombre.substring(0, 5).toLowerCase(); // Primeros 2 caracteres del nombre
+
+  
+        return `${keyPart1}${keyPart2}`; // Concatenar partes para formar el internalKey
+      }
 
     static calculateInternalKey(staffDTO: StaffDTO): string {
         const apellido1 = staffDTO.apellido1 || '';

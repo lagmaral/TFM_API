@@ -14,6 +14,8 @@ import { StaffModule } from './modules/staff/staff.module';
 import { ConfigurableService } from './shared/services/env.service';
 import { staticPaths } from './static.config';
 import { EquipoStaffModule } from './modules/equipo-staff/equipo-staff.module';
+import { PlantillaModule } from './modules/plantilla/plantilla.module';
+import { EquipoChatModule } from './modules/equipo-chat/equipo-chat.module';
 
 
 @Module({
@@ -22,9 +24,11 @@ import { EquipoStaffModule } from './modules/equipo-staff/equipo-staff.module';
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(ormconfig.options),
     TemporadaModule,
+    EquipoChatModule,
     EquipoModule,
     EquipoStaffModule,
     UsuariosModule ,
+    PlantillaModule,
     StaffModule,
     ServeStaticModule.forRootAsync({
       imports: [ConfigModule],

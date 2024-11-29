@@ -1,4 +1,4 @@
-/* eslint-disable prettier/prettier */
+
 import { Controller, Get, Post, Put, Param, Body, Query, UseInterceptors, UploadedFile, Delete } from '@nestjs/common';
 import { LoggerService } from 'src/shared/services/logger.service';
 import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';

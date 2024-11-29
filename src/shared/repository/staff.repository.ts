@@ -32,16 +32,16 @@ export class StaffRepository extends BaseRepository<
   }
 
   async findAndCount(arg0: { where: any; skip: number; take: number; }): Promise<[any[], number]> {
-    this.logger.log('SKIP: '+arg0.skip);
+    /*this.logger.log('SKIP: '+arg0.skip);
     this.logger.log('TAKE: '+arg0.take);
-    this.logger.log('WHERE: '+JSON.stringify(arg0.where));
+    this.logger.log('WHERE: '+JSON.stringify(arg0.where));*/
     let whereConditions = {};
 
       // Verifica si arg0.where es un string y trata de parsearlo
       if (typeof arg0.where === 'string') {
         try {
           whereConditions = JSON.parse(arg0.where);
-          this.logger.log('WHERE conditions parsed successfully:'+ whereConditions);
+          //this.logger.log('WHERE conditions parsed successfully:'+ whereConditions);
         } catch (error) {
           this.logger.error('Error parsing WHERE conditions:', error);
           whereConditions = {}; // Inicializa como objeto vacío en caso de error
@@ -60,7 +60,7 @@ export class StaffRepository extends BaseRepository<
     
       // Verifica si whereConditions tiene propiedades
       if (Object.keys(whereConditions).length > 0) {
-        this.logger.log('APLICANDO WHERE ' + Object.keys(whereConditions).length);
+        //this.logger.log('APLICANDO WHERE ' + Object.keys(whereConditions).length);
     
         // Construir condiciones LIKE
         Object.keys(whereConditions).forEach((key) => {
@@ -70,7 +70,7 @@ export class StaffRepository extends BaseRepository<
           }
         });
       } else {
-        this.logger.log('No se aplicó la cláusula WHERE porque no hay condiciones válidas.');
+        //this.logger.log('No se aplicó la cláusula WHERE porque no hay condiciones válidas.');
       }
     
       const [items, count] = await queryBuilder.getManyAndCount();

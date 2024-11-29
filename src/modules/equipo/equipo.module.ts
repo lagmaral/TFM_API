@@ -6,9 +6,14 @@ import { EquipoEntity } from 'src/shared/entities/equipo.entity';
 import { LoggerService } from 'src/shared/services/logger.service';
 import { EquipoRepository } from 'src/shared/repository/equipo.repository';
 import { EquipoMapper } from 'src/shared/mappers/equipo.mapper';
+import { PlantillaModule } from '../plantilla/plantilla.module';
+import { EquipoStaffModule } from '../equipo-staff/equipo-staff.module';
+import { EquipoChatModule } from '../equipo-chat/equipo-chat.module';
+import { TemporadaModule } from '../temporada/temporada.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EquipoEntity])], // Esto registra la entidad TemporadaEntity en el contexto del módulo
+  imports: [TypeOrmModule.forFeature([EquipoEntity]),
+  EquipoChatModule,EquipoStaffModule,PlantillaModule,TemporadaModule], // Esto registra la entidad TemporadaEntity en el contexto del módulo
   controllers: [EquipoController], // El controlador de la entidad
   providers: [
     EquipoService, // Servicio

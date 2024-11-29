@@ -17,4 +17,8 @@ export class EquipoDTO extends BaseDTO {
 
   @IsBoolean()
   activo: boolean;
+
+  @IsString()
+  internalkey: string;
+  
 }

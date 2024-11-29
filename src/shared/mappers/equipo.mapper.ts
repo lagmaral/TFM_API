@@ -1,6 +1,8 @@
 import { EquipoEntity } from '../entities/equipo.entity';
 import { EquipoDTO } from '../dtos/equipo.dto';
 import { TemporadaEntity } from '../entities/temporada.entity';
+import { UtilsService } from '../services/util.service';
+import { ConfigurableService } from '../services/env.service';
 
 export class EquipoMapper {
   static toEntity(equipoDTO: EquipoDTO): EquipoEntity {
@@ -12,6 +14,7 @@ export class EquipoMapper {
     equipo.descripcion = equipoDTO.descripcion;
     equipo.orden = equipoDTO.orden;
     equipo.activo = equipoDTO.activo;
+    equipo.internalkey = equipoDTO.internalkey.replaceAll(ConfigurableService.getURLPlayersPath(), '').replaceAll('.jpg', '');
     return equipo;
   }
 
@@ -24,6 +27,7 @@ export class EquipoMapper {
     equipoDTO.descripcion = equipo.descripcion;
     equipoDTO.orden = equipo.orden;
     equipoDTO.activo = equipo.activo;
+    equipoDTO.internalkey = ConfigurableService.getURLPlayersPath()+equipo.internalkey+'.jpg';
     return equipoDTO;
   }
 }

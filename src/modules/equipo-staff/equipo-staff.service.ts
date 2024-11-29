@@ -13,4 +13,8 @@ export class EquipoStaffService {
       async deleteEquipoStaffByStaffId(id: number): Promise<boolean>  {
         return this.equipoStaffRepository.deleteEquipoStaffByStaffId(id);
       }
+
+      async deleteEquipoStaffByTeamId(id: number): Promise<boolean>  {
+        return this.equipoStaffRepository.deleteEquipoStaffByTeamId(id);
+      }
 }

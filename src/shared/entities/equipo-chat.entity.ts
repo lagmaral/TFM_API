@@ -1,6 +1,7 @@
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { UsuarioEntity } from './usuario.entity';
 import { BaseEntity } from './base.entity';
+import { EquipoEntity } from './equipo.entity';
 @Entity('equipochat')
 export class EquipoChatEntity extends BaseEntity {
   @ManyToOne(() => UsuarioEntity)
@@ -12,4 +13,8 @@ export class EquipoChatEntity extends BaseEntity {
 
   @Column('text')
   mensaje: string;
+
+  @ManyToOne(() => EquipoEntity)
+  @JoinColumn({ name: 'idequipo' })
+  equipo: EquipoEntity;
 }

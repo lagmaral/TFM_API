@@ -7,6 +7,8 @@ import { LoggerService } from '../services/logger.service';
 import { EquipoDTO } from '../dtos/equipo.dto';
 import { EquipoEntity } from '../entities/equipo.entity';
 import { EquipoMapper } from '../mappers/equipo.mapper';
+import { UtilsService } from '../services/util.service';
+import { TemporadaEntity } from '../entities/temporada.entity';
 
 @Injectable()
 export class EquipoRepository extends BaseRepository<
@@ -42,4 +44,68 @@ export class EquipoRepository extends BaseRepository<
     });
     return entities.map(EquipoMapper.toDTO); // Transformar a DTO
   }
+
+  async findAndCount(arg0: { where: any; skip: number; take: number; }): Promise<[any[], number]> {
+    this.logger.log('SKIP: '+arg0.skip);
+    this.logger.log('TAKE: '+arg0.take);
+    this.logger.log('WHERE: '+JSON.stringify(arg0.where));
+    let whereConditions = {};
+
+      // Verifica si arg0.where es un string y trata de parsearlo
+      if (typeof arg0.where === 'string') {
+        try {
+          whereConditions = JSON.parse(arg0.where);
+        } catch (error) {
+          whereConditions = {}; // Inicializa como objeto vacío en caso de error
+        }
+      } else if (typeof arg0.where === 'object' && arg0.where !== null) {
+        // Si ya es un objeto, simplemente lo asignamos
+        whereConditions = arg0.where;
+      }
+    
+      const queryBuilder = this.repository.createQueryBuilder('equipo')
+      .innerJoin('equipo.temporada', 'temporada') // Realiza un JOIN con TemporadaEntity
+        .where('temporada.activa = :activa', { activa: true }) // Filtra por temporada activa
+        .orderBy('equipo.orden', 'ASC')
+        .skip(arg0.skip)
+        .take(arg0.take);
+    
+      // Verifica si whereConditions tiene propiedades
+      if (Object.keys(whereConditions).length > 0) {
+        this.logger.log('APLICANDO WHERE ' + Object.keys(whereConditions).length);
+    
+        // Construir condiciones LIKE
+        Object.keys(whereConditions).forEach((key) => {
+          const value = whereConditions[key];
+          if (value) { // Asegúrate de que el valor no sea nulo o vacío
+            queryBuilder.andWhere(`equipo.${key} LIKE :${key}`, { [key]: `%${value}%` });
+          }
+        });
+      } else {
+        this.logger.log('No se aplicó la cláusula WHERE porque no hay condiciones válidas.');
+      }
+    
+      const [items, count] = await queryBuilder.getManyAndCount();
+    
+      return [items, count];
+  
+
+  }
+
+  async deleteById(id: number): Promise<boolean> {
+    return await super.deleteById(id);
+    
+  }
+
+
+  async getNextOrdenValueUsingQueryBuilder(): Promise<number> {
+    const result = await this.repository.createQueryBuilder('equipo')
+      .innerJoin('equipo.temporada', 'temporada') // Realiza un JOIN con TemporadaEntity
+      .where('temporada.activa = :activa', { activa: true }) // Filtra por temporadas activas
+      .select('MAX(equipo.orden)', 'maxOrden') // Obtiene el valor máximo de la columna 'orden'
+      .getRawOne(); // Obtiene el resultado como un objeto
+
+    // Si no hay ningún valor, devuelve 1; de lo contrario, suma 1 al valor máximo encontrado
+    return result.maxOrden ? result.maxOrden + 1 : 1;
+}
 }
