@@ -1,20 +1,31 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Put, Param, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Body, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { LoggerService } from 'src/shared/services/logger.service';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StaffService } from './staff.service';
 import { StaffDTO } from 'src/shared/dtos/staff.dto';
 import { PaginationDto } from 'src/shared/dtos/pagination.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
+import { ConfigurableService } from 'src/shared/services/env.service';
+import { existsSync, mkdirSync } from 'fs';
+import { extname, join } from 'path';
+import { diskStorage } from 'multer';
+import { UtilsService } from 'src/shared/services/util.service';
+
 
 @ApiTags('staff') // Etiqueta para el grupo
 @Controller('staff')
 export class StaffController {
+   
   constructor(
     private staffService: StaffService,
     private readonly logger: LoggerService,
   ) {
     this.logger.setContext('StaffController');
   }
+
+
 
   // Método para obtener todos los registros que coinciden con los filtros
   @Get('paginated')
@@ -25,23 +36,76 @@ export class StaffController {
     return this.staffService.findPaginated(filters, paginationDto);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Crear una nuevo miembro del staff' })
+  @Post('')
+  @ApiOperation({ summary: 'Crear un nuevo miembro del staff' })
+  @ApiConsumes('multipart/form-data') // Indica que el endpoint consume FormData
   @ApiBody({
-    type: StaffDTO,
-    description: 'Contenido del miembro del staff',
-    required: true,
+    description: 'Contenido del miembro del staff con imagen',
+    schema: {
+      type: 'object',
+      properties: {
+        image: {
+          type: 'string',
+          format: 'binary', // Swagger interpreta este campo como un archivo
+        },
+        id: { type: 'number' },
+        telefono: { type: 'string' },
+        internalkey: { type: 'string' },
+        foto: { type: 'string' },
+        admin: { type: 'boolean' },
+        fechanacimiento: { type: 'string', format: 'date' },
+        nombre: { type: 'string' },
+        apellido1: { type: 'string' },
+        apellido2: { type: 'string' },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
-    description: 'Miembro del staff creadao exitosamente',
+    description: 'Miembro del staff creado exitosamente',
     type: StaffDTO,
   })
-  // Método para dar de alta un nuevo Staff
-  async create(@Body() input: StaffDTO): Promise<StaffDTO> {
-    return this.staffService.newStaff(input);
+  @UseInterceptors(FileInterceptor('image', { // Cambié 'file' a 'image'
+    storage: diskStorage({
+      destination: (req, file, cb) => {
+        const uploadPath = join(ConfigurableService.getConfigPlayerPath());
+        if (!existsSync(uploadPath)) {
+          mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+      },
+      filename: (req, file, cb) => {
+        const staffData: StaffDTO = req.body;
+        const newFileName = `${UtilsService.calculateInternalKey(staffData)}${extname(file.originalname)}`;
+        cb(null, newFileName);
+      },
+    }),
+  }))
+  async newStaff(@Body() object: StaffDTO,@UploadedFile() file?: Express.Multer.File) { // Hacer el archivo opcional
+    // Si no se carga un archivo, simplemente continúa
+    if (!file) {
+      console.log('No se ha cargado ningún archivo.');
+    } else {
+      console.log(`Archivo cargado: ${file.filename}`);
+      console.log(`Ruta del archivo cargado: ${file.path}`);
+    }
+  
+    // Intentar persistir el objeto en la base de datos
+    try {
+      const savedObject = await this.staffService.newStaff(object); // Método para guardar el objeto
+      return {
+        msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+        additionalData: savedObject,
+        filePath: file ? file.path : null // Solo incluir la ruta si hay un archivo
+      };
+    } catch (error) {
+      // Manejo de error si la persistencia falla
+      throw new Error('Error al guardar el objeto: ' + error.message);
+    }
   }
 
+
+      
   @Get(':id')
   @ApiOperation({ summary: 'Obtener el miembro del staff por ID' })
   @ApiResponse({
@@ -59,24 +123,70 @@ export class StaffController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Actualizar un miembro del staff existente' }) // Descripción de la operación
-  @ApiBody({
-    type: StaffDTO,
-    description: 'Datos para actualizar elmiembro del staff',
-    required: true,
-  }) // Cuerpo de la solicitud con los datos de actualización
-  @ApiResponse({
-    status: 200,
-    description: 'Miembro del staff actualizado exitosamente',
-    type: StaffDTO,
-  }) // Respuesta cuando la actualización es exitosa
-  @ApiResponse({ status: 404, description: 'Miembro no encontrado' }) // Respuesta cuando no se encuentra la temporada
-  async update(
-    @Param('id') id: number,
-    @Body() dto: StaffDTO,
-  ): Promise<StaffDTO | undefined> {
-    this.logger.log(`Updating  temp: ${dto}`);
-    return this.staffService.updateStaff(id, dto);
+@ApiOperation({ summary: 'Actualizar un miembro del staff existente' })
+@ApiConsumes('multipart/form-data') // Indica que el endpoint consume FormData
+@ApiBody({
+  description: 'Contenido del miembro del staff con imagen',
+  schema: {
+    type: 'object',
+    properties: {
+      image: {
+        type: 'string',
+        format: 'binary', // Swagger interpreta este campo como un archivo
+      },
+      id: { type: 'number' },
+      telefono: { type: 'string' },
+      internalkey: { type: 'string' },
+      foto: { type: 'string' },
+      admin: { type: 'boolean' },
+      fechanacimiento: { type: 'string', format: 'date' },
+      nombre: { type: 'string' },
+      apellido1: { type: 'string' },
+      apellido2: { type: 'string' },
+    },
+  },
+})
+@ApiResponse({
+  status: 200,
+  description: 'Miembro del staff actualizado exitosamente',
+  type: StaffDTO,
+})
+@UseInterceptors(FileInterceptor('image', { // Cambié 'file' a 'image'
+  storage: diskStorage({
+    destination: (req, file, cb) => {
+      const uploadPath = join(ConfigurableService.getConfigPlayerPath());
+      if (!existsSync(uploadPath)) {
+        mkdirSync(uploadPath, { recursive: true });
+      }
+      cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+      const staffData: StaffDTO = req.body;
+      const newFileName = `${UtilsService.calculateInternalKey(staffData)}${extname(file.originalname)}`;
+      cb(null, newFileName);
+    },
+  }),
+}))
+async updateStaff(@Param('id') id: number, @Body() object: StaffDTO, @UploadedFile() file?: Express.Multer.File) {
+
+  // Intentar persistir el objeto en la base de datos
+  try {
+    this.logger.log(JSON.stringify(object));
+    const savedObject = await this.staffService.updateStaff(id, object); // Método para guardar el objeto
+
+    return {
+      msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+      additionalData: savedObject,
+      filePath: file ? file.path : null // Solo incluir la ruta si hay un archivo
+    };
+  } catch (error) {
+    // Manejo de error si la persistencia falla
+    throw new Error('Error al guardar el objeto: ' + error.message);
   }
 }
+
+  
+}
+
+
 

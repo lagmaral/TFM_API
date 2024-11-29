@@ -33,7 +33,6 @@ export class StaffService {
     // Crear una nueva instancia de Staff
     const staff = StaffMapper.toEntity(staffDTO);
     staff.internalkey = internalKey;
-
     // Guardar en la base de datos
     return await this.staffRepository.create(staff);
   }
@@ -54,16 +53,17 @@ export class StaffService {
     const existingStaff = await this.staffRepository.repository.findOne({
       where: { internalkey: internalKey },
     });
-    if (existingStaff && existingStaff.id !== id) {
+    const numericId = Number(id);
+    if (existingStaff && existingStaff.id !== numericId) {
       throw new ConflictException('Miembro ya existente'); // Lanza un error si ya existe
     }
-
     // 3. Modificar el usuario con los nuevos datos
     // Si el teléfono es válido o no se modifica, se puede actualizar
     const updatedStaff = StaffMapper.toEntity(input);
     updatedStaff.id = updatedStaff.id; // Mantener el ID del usuario actual
     updatedStaff.internalkey = internalKey; // Mantener el mismo token si es necesario
-
+    updatedStaff.fechanacimiento = this.formatDateToPostgres(new Date(updatedStaff.fechanacimiento));
+    this.logger.log("ANTES DE GUARDAR: "+JSON.stringify(updatedStaff));
     // Actualiza la base de datos con los nuevos datos del usuario
     await this.staffRepository.update(id, updatedStaff);
 
@@ -90,6 +90,16 @@ export class StaffService {
     if (!birthDate) return '';
     
     return `${birthDate.getFullYear()}${String(birthDate.getMonth() + 1).padStart(2, '0')}${String(birthDate.getDate()).padStart(2, '0')}`;
+  }
+
+  formatDateToPostgres(originalDate) {
+    // Verificar si el argumento es un objeto Date válido
+    const year = originalDate.getFullYear();
+    const month = originalDate.getMonth(); // Los meses son 0-indexados
+    const day = originalDate.getDate();
+    
+    // Crear un nuevo objeto Date, estableciendo la hora a medianoche (00:00:00)
+    return new Date(Date.UTC(year, month, day));
   }
 
   async findPaginated(
