@@ -12,10 +12,13 @@ import { UsuarioMapper } from 'src/shared/mappers/usuario.mapper';
 import { JwtService } from '@nestjs/jwt/dist/jwt.service';
 import { AuthDTO } from 'src/shared/dtos/auth.dto';
 
+import { StaffService } from '../staff/staff.service';
+
 @Injectable()
 export class UsuariosService {
   constructor(
     private usuarioRepository: UsuarioRepository,
+    private staffService: StaffService,
     private readonly logger: LoggerService,
     private readonly jwtService: JwtService,
   ) {
@@ -64,7 +67,10 @@ export class UsuariosService {
     usuario.password = this.hashPassword(input.password);
     usuario.token = this.generateToken(input.telefono);
     // Guardar el usuario en la base de datos
-    return this.usuarioRepository.create(usuario);
+
+    let dto = await this.usuarioRepository.save(usuario);
+    dto = await this.isAdminUser(dto);
+    return dto;
   }
 
   // Registrar un nuevo usuario
@@ -74,7 +80,10 @@ export class UsuariosService {
     if (!existingUser) {
       throw new ConflictException('No existe usaurio activo con el token');
     }
-    return this.usuarioRepository.findByToken(token);
+    //staffRepository
+    let dto = await this.usuarioRepository.findById(existingUser.id);
+    dto = await this.isAdminUser(dto);
+    return dto;
   }
 
   //Realizar logout del usuario
@@ -112,7 +121,15 @@ export class UsuariosService {
     // Actualizar el token en la base de datos
     await this.usuarioRepository.update(user.id, { token });
 
-    return await this.usuarioRepository.findById(user.id);
+    let dto = await this.usuarioRepository.findById(user.id);
+    dto = await this.isAdminUser(dto);
+    return dto;
+  }
+
+  async  isAdminUser(dto: UsuarioDTO): Promise<UsuarioDTO> {
+    // Supongamos que this.staffService.isAdminUser devuelve una promesa
+    dto.isAdmin = await this.staffService.isAdminUser(dto);
+    return dto;
   }
 
   async updateUser(token: string, input: UsuarioDTO): Promise<UsuarioDTO> {
@@ -138,6 +155,9 @@ export class UsuariosService {
     const savedUser = await this.usuarioRepository.update(user.id, updatedUser);
 
     // Devuelve el DTO actualizado del usuario
-    return await this.usuarioRepository.findById(user.id);
+    //return await this.usuarioRepository.findById(user.id);
+    let dto = await this.usuarioRepository.findById(savedUser.id);
+    dto = await this.isAdminUser(dto);
+    return dto;
   }
 }

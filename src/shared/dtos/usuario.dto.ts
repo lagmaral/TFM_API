@@ -1,4 +1,4 @@
-import { IsString, Length, IsEmail, IsDate } from 'class-validator';
+import { IsString, Length, IsEmail, IsDate, IsBoolean } from 'class-validator';
 import { BaseDTO } from './base.dto';
 
 export class UsuarioDTO extends BaseDTO {
@@ -36,4 +36,7 @@ export class UsuarioDTO extends BaseDTO {
 
   @IsDate()
   fechanacimiento: Date;
+
+  @IsBoolean()
+  isAdmin:boolean = false;
 }
