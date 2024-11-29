@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Put, Param, Body, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Body, Query, UseInterceptors, UploadedFile, Delete } from '@nestjs/common';
 import { LoggerService } from 'src/shared/services/logger.service';
 import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StaffService } from './staff.service';
@@ -185,7 +185,7 @@ async updateStaff(@Param('id') id: number, @Body() object: StaffDTO, @UploadedFi
   }
 }
 
-  @Put(':id')
+  @Delete(':id')
   @ApiOperation({ summary: 'Elimina un miembro del staff existente' })
   @ApiResponse({
     status: 200,
@@ -197,7 +197,7 @@ async updateStaff(@Param('id') id: number, @Body() object: StaffDTO, @UploadedFi
     // Intentar persistir el objeto en la base de datos
     try {
       
-      //const savedObject = await this.staffService.updateStaff(id, object); // Método para guardar el objeto
+      await this.staffService.deleteStaff(id); // Método para guardar el objeto
   
  
     } catch (error) {

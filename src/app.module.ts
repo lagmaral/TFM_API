@@ -13,6 +13,7 @@ import { UsuariosModule } from './modules/usuarios/usuarios.module';
 import { StaffModule } from './modules/staff/staff.module';
 import { ConfigurableService } from './shared/services/env.service';
 import { staticPaths } from './static.config';
+import { EquipoStaffModule } from './modules/equipo-staff/equipo-staff.module';
 
 
 @Module({
@@ -22,6 +23,7 @@ import { staticPaths } from './static.config';
     TypeOrmModule.forRoot(ormconfig.options),
     TemporadaModule,
     EquipoModule,
+    EquipoStaffModule,
     UsuariosModule ,
     StaffModule,
     ServeStaticModule.forRootAsync({

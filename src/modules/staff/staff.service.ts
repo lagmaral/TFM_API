@@ -3,23 +3,20 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/shared/dtos/pagination.dto';
 import { StaffDTO } from 'src/shared/dtos/staff.dto';
-import { EquipoStaffEntity } from 'src/shared/entities/equipo-staff.entity';
 import { StaffMapper } from 'src/shared/mappers/staff.mapper';
-import { EquipoStaffRepository } from 'src/shared/repository/equipo-staff.repository';
 
 import { StaffRepository } from 'src/shared/repository/staff.repository';
 import { LoggerService } from 'src/shared/services/logger.service';
-import { Like, MoreThan, Repository } from 'typeorm';
+import { EquipoStaffService } from '../equipo-staff/equipo-staff.service';
+
 
 @Injectable()
 export class StaffService {
   constructor(
     private staffRepository: StaffRepository,
-    @InjectRepository(EquipoStaffRepository)
-    private readonly equipoStaffRepository: EquipoStaffRepository,
+    private readonly equipoStaffService: EquipoStaffService,
     private readonly logger: LoggerService,
   ) {
     logger.setContext('StaffService');
@@ -128,7 +125,7 @@ export class StaffService {
   }
 
   async deleteStaff(id: number): Promise<boolean> {
-    await this.equipoStaffRepository.deleteStaffId(id);
+    await this.equipoStaffService.deleteEquipoStaffByStaffId(id);
     return await this.staffRepository.deleteById(id);
   }
 }

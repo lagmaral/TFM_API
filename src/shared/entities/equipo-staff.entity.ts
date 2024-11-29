@@ -15,6 +15,6 @@ export class EquipoStaffEntity extends BaseEntity {
   staff: StaffEntity;
 
   @ManyToOne(() => EquipoEntity)
-  @JoinColumn({ name: 'Idequipo' })
+  @JoinColumn({ name: 'idequipo' })
   equipo: EquipoEntity;
 }
