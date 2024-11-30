@@ -11,6 +11,7 @@ import { StaffRepository } from 'src/shared/repository/staff.repository';
 import { LoggerService } from 'src/shared/services/logger.service';
 import { EquipoStaffService } from '../equipo-staff/equipo-staff.service';
 import { UsuarioDTO } from 'src/shared/dtos/usuario.dto';
+import { UtilsService } from 'src/shared/services/util.service';
 
 
 @Injectable()
@@ -80,7 +81,7 @@ export class StaffService {
     const updatedStaff = StaffMapper.toEntity(input);
     updatedStaff.id = updatedStaff.id; // Mantener el ID del usuario actual
     updatedStaff.internalkey = internalKey; // Mantener el mismo token si es necesario
-    updatedStaff.fechanacimiento = this.formatDateToPostgres(new Date(updatedStaff.fechanacimiento));
+    updatedStaff.fechanacimiento = UtilsService.formatDateToPostgres(new Date(updatedStaff.fechanacimiento));
     //this.logger.log("ANTES DE GUARDAR: "+JSON.stringify(updatedStaff));
     // Actualiza la base de datos con los nuevos datos del usuario
     await this.staffRepository.update(id, updatedStaff);
@@ -109,15 +110,7 @@ export class StaffService {
     return `${birthDate.getFullYear()}${String(birthDate.getMonth() + 1).padStart(2, '0')}${String(birthDate.getDate()).padStart(2, '0')}`;
   }
 
-  formatDateToPostgres(originalDate) {
-    // Verificar si el argumento es un objeto Date válido
-    const year = originalDate.getFullYear();
-    const month = originalDate.getMonth(); // Los meses son 0-indexados
-    const day = originalDate.getDate();
-    
-    // Crear un nuevo objeto Date, estableciendo la hora a medianoche (00:00:00)
-    return new Date(Date.UTC(year, month, day));
-  }
+
 
   async findPaginated(
     filters: any,

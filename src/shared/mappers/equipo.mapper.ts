@@ -14,7 +14,15 @@ export class EquipoMapper {
     equipo.descripcion = equipoDTO.descripcion;
     equipo.orden = equipoDTO.orden;
     equipo.activo = equipoDTO.activo;
-    equipo.internalkey = equipoDTO.internalkey.replaceAll(ConfigurableService.getURLPlayersPath(), '').replaceAll('.jpg', '');
+    if (equipoDTO.internalkey) {
+      equipo.internalkey = equipoDTO.internalkey
+          .toUpperCase()
+          .replaceAll(ConfigurableService.getURLPlayersPath(), '')
+          .replaceAll('.JPG', '');
+    } else {
+      equipo.internalkey  = ''; // O puedes asignar un valor por defecto si lo prefieres
+    }
+    //equipo.internalkey = equipoDTO.internalkey.replaceAll(ConfigurableService.getURLPlayersPath(), '').replaceAll('.jpg', '');
     return equipo;
   }
 

@@ -11,6 +11,7 @@ import { existsSync, mkdirSync } from 'fs';
 import { extname, join } from 'path';
 import { diskStorage } from 'multer';
 import { UtilsService } from 'src/shared/services/util.service';
+import { PosicionDTO } from 'src/shared/dtos/posicion.dto';
 
 @ApiTags('equipo') // Etiqueta para el grupo
 @Controller('equipo')
@@ -128,24 +129,6 @@ export class EquipoController {
     await this.equipoService.intercambiarOrden(id, direccion);
     return { message: `Orden intercambiado con éxito (movido ${direccion === 'asc' ? 'arriba' : 'abajo'})` };
   }
-    /*@Put('/cambiar-orden')
-    @ApiOperation({ summary: 'Intercambiar el orden de un equipo por ID' })
-    @ApiResponse({
-      status: 200,
-      description: 'Devuelve el equipo con el orden',
-      type: EquipoDTO,
-    })
-    @ApiResponse({
-      status: 404,
-      description: 'No se encuentra el equipo',
-    })
-    async cambiarOrden(
-      @Query('id') id: number,
-      @Query('direccion') direccion: 'asc' | 'desc'
-    ): Promise<{ message: string }> {
-      await this.equipoService.intercambiarOrden(+id, direccion);
-      return { message: `Orden intercambiado con éxito (movido ${direccion === 'asc' ? 'arriba' : 'abajo'})` };
-    }*/
 
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar un equipo existente' }) // Descripción de la operación
@@ -229,7 +212,7 @@ export class EquipoController {
   
   
   // Endpoint para obtener todos los equipos de una temporada ordenados por 'orden'
-  /*@Get('temporada/:idTemporada')
+  @Get('/all/teams')
   @ApiOperation({ summary: 'Obtener los equipos de una temporada' })
   @ApiResponse({
     status: 200,
@@ -240,47 +223,24 @@ export class EquipoController {
     status: 404,
     description: 'No se encuentra el equipo',
   })
-  async findAllByTemporada(
-    @Param('idTemporada') idTemporada: number,
-  ): Promise<EquipoDTO[]> {
-    return this.equipoService.findAllByTemporadaOrdenada(idTemporada);
+  async findAllByTemporada(): Promise<EquipoDTO[]> {
+    return this.equipoService.findAllByTemporadaOrdenada();
   }
 
-  @Post()
-  @ApiOperation({ summary: 'Crear una nuevo equipo' })
-  @ApiBody({
-    type: EquipoDTO,
-    description: 'Crea un nuevo equipo',
-    required: true,
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Equipo creada exitosamente',
-    type: EquipoDTO,
-  })
-  async create(@Body() input: EquipoDTO): Promise<EquipoDTO> {
-    this.logger.log(`Creando nuevo equipo: ${JSON.stringify(input)}`);
-    return this.equipoService.newTeam(input);
-  }
-
-  @Put(':id')
-  @ApiOperation({ summary: 'Actualizar un equipo existente' }) // Descripción de la operación
-  @ApiBody({
-    type: EquipoDTO,
-    description: 'Datos para actualizar el equipoº',
-    required: true,
-  }) // Cuerpo de la solicitud con los datos de actualización
+  @Get('/all/positions')
+  @ApiOperation({ summary: 'Obtener todas las posiciones' })
   @ApiResponse({
     status: 200,
-    description: 'Equipo actualizado exitosamente',
+    description: 'Devuelve todas las posiciones',
     type: EquipoDTO,
-  }) // Respuesta cuando la actualización es exitosa
-  @ApiResponse({ status: 404, description: 'Equipo no encontrado' }) // Respuesta cuando no se encuentra el id
-  async update(
-    @Param('id') id: number,
-    @Body() dto: Partial<EquipoDTO>,
-  ): Promise<EquipoDTO | undefined> {
-    this.logger.log(`Updating  temp: ${dto}`);
-    return this.equipoService.updateTeam(dto);
-  }*/
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encuentra el equipo',
+  })
+  async findAllPositions(): Promise<PosicionDTO[]> {
+    return this.equipoService.findAllPositions();
+  }
+
+
 }

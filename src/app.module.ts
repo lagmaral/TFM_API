@@ -16,6 +16,8 @@ import { staticPaths } from './static.config';
 import { EquipoStaffModule } from './modules/equipo-staff/equipo-staff.module';
 import { PlantillaModule } from './modules/plantilla/plantilla.module';
 import { EquipoChatModule } from './modules/equipo-chat/equipo-chat.module';
+import { PosicionesModule } from './modules/posiciones/posiciones.module';
+import { JugadorModule } from './modules/jugador/jugador.module';
 
 
 @Module({
@@ -23,13 +25,16 @@ import { EquipoChatModule } from './modules/equipo-chat/equipo-chat.module';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(ormconfig.options),
-    TemporadaModule,
+
     EquipoChatModule,
     EquipoModule,
     EquipoStaffModule,
+    JugadorModule,
     UsuariosModule ,
     PlantillaModule,
+    PosicionesModule,
     StaffModule,
+    TemporadaModule,
     ServeStaticModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

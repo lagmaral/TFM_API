@@ -9,6 +9,8 @@ import { EquipoChatService } from '../equipo-chat/equipo-chat.service';
 import { PlantillaService } from '../plantilla/plantilla.service';
 import { TemporadaService } from '../temporada/temporada.service';
 import { UtilsService } from 'src/shared/services/util.service';
+import { PosicionesService } from '../posiciones/posiciones.service';
+import { PosicionDTO } from 'src/shared/dtos/posicion.dto';
 
 @Injectable()
 export class EquipoService {
@@ -18,6 +20,7 @@ export class EquipoService {
     private readonly equipoChatService: EquipoChatService,
     private readonly plantillaService: PlantillaService,
     private readonly temporadaService: TemporadaService,
+    private readonly posicionesService: PosicionesService,
     private readonly logger: LoggerService,
   ) {
     logger.setContext('EquipoService');
@@ -31,9 +34,10 @@ export class EquipoService {
     return await this.equipoRepository.findById(id);
   }
 
-  async findAllByTemporadaOrdenada(idTemporada: number): Promise<EquipoDTO[]> {
+  async findAllByTemporadaOrdenada(): Promise<EquipoDTO[]> {
     // Llamar al repositorio para obtener los equipos ordenados por 'orden'
-    return await this.equipoRepository.findByTempId(idTemporada);
+    const temporada = await this.temporadaService.findActiva();
+    return await this.equipoRepository.findByTempId(temporada.id);
   }
 
   async newTeam(dto: EquipoDTO): Promise<EquipoDTO> {
@@ -81,4 +85,9 @@ export class EquipoService {
     else
       await this.equipoRepository.intercambiarOrden(id,'desc');
   }
+
+  async findAllPositions(): Promise<PosicionDTO[]> {
+    return await this.posicionesService.findAll();
+  }
+  
 }

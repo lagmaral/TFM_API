@@ -10,10 +10,11 @@ import { PlantillaModule } from '../plantilla/plantilla.module';
 import { EquipoStaffModule } from '../equipo-staff/equipo-staff.module';
 import { EquipoChatModule } from '../equipo-chat/equipo-chat.module';
 import { TemporadaModule } from '../temporada/temporada.module';
+import { PosicionesModule } from '../posiciones/posiciones.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([EquipoEntity]),
-  EquipoChatModule,EquipoStaffModule,PlantillaModule,TemporadaModule], // Esto registra la entidad TemporadaEntity en el contexto del módulo
+  EquipoChatModule,EquipoStaffModule,PlantillaModule,TemporadaModule, PosicionesModule], // Esto registra la entidad TemporadaEntity en el contexto del módulo
   controllers: [EquipoController], // El controlador de la entidad
   providers: [
     EquipoService, // Servicio

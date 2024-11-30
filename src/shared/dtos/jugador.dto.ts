@@ -3,25 +3,34 @@ import { BaseDTO } from './base.dto';
 
 export class JugadorDTO extends BaseDTO {
   @IsDate()
-  fechaNacimiento: Date;
+  fechanacimiento: Date;
 
   @IsNumber()
   idposicion: number;
 
-  @IsString()
-  @Length(1, 500)
-  foto: string;
+  @IsNumber()
+  idequipo: number;
 
   @IsString()
   @Length(1, 20)
   internalkey: string;
 
-  @IsNumber()
-  idcuota: number;
+  //@IsNumber()
+  //idcuota: number;
 
   @IsBoolean()
   consentimiento: boolean;
 
-  @IsNumber()
-  idpersona: number;
+  @IsString()
+  @Length(3, 100)
+  nombre: string;
+
+  @IsString()
+  @Length(3, 200)
+  apellido1: string;
+
+  @IsString()
+  @Length(3, 200)
+  apellido2: string;
+
 }

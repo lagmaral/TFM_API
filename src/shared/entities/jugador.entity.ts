@@ -7,28 +7,36 @@ import { BaseEntity } from './base.entity';
 @Entity('jugador')
 export class JugadorEntity extends BaseEntity{
   @Column({ type: 'date'})
-  fechaNacimiento: Date;
+  fechanacimiento: Date;
 
   @ManyToOne(() => PosicionEntity)
   @JoinColumn({ name: 'idposicion' })
   posicion: PosicionEntity;
 
-  @Column({ length: 500 })
-  foto: string;
-
   @Column({ length: 20, unique: true })
   internalkey: string;
 
-  @ManyToOne(() => CuotaEntity)
+  /*@ManyToOne(() => CuotaEntity)
   @JoinColumn({ name: 'idcuota' })
-  cuota: CuotaEntity;
+  cuota: CuotaEntity;*/
 
-  @Column({ default: false })
+  @Column({
+    type: "boolean",
+    transformer: {
+        to: (value: boolean) => value, // Transformación al guardar
+        from: (value: any) => value === true || value === 'true', // Transformación al recuperar
+    },
+  } )
   consentimiento: boolean;
 
-  @ManyToOne(() => PersonaEntity)
-  @JoinColumn({ name: 'idpersona' })
-  persona: PersonaEntity;
+  @Column({ length: 100,  })
+  nombre: string;
+
+  @Column({ length: 200,  })
+  apellido1: string;
+
+  @Column({ length: 200,  })
+  apellido2: string;
 
 
 }
