@@ -74,4 +74,11 @@ export class EquipoService {
       total,
     };
   }
+
+  async intercambiarOrden(id: number, direccion:string): Promise<void> {
+    if(direccion === 'asc')
+      await this.equipoRepository.intercambiarOrden(id,'asc');
+    else
+      await this.equipoRepository.intercambiarOrden(id,'desc');
+  }
 }

@@ -109,7 +109,44 @@ export class EquipoController {
     }
   }
 
-
+ /* @Put('/cambiar-orden/:id')
+  @ApiOperation({ summary: 'Intercambiar el orden de un equipo por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Devuelve el equipo con el orden',
+    type: EquipoDTO,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encuentra el equipo',
+  })
+  async cambiarOrden(
+    @Param('id') id: number,
+    @Query('direccion') direccion: 'asc' | 'desc'
+  ): Promise<{ message: string }> {
+  
+    await this.equipoService.intercambiarOrden(id, direccion);
+    return { message: `Orden intercambiado con éxito (movido ${direccion === 'asc' ? 'arriba' : 'abajo'})` };
+  }*/
+    @Put('/cambiar-orden')
+    @ApiOperation({ summary: 'Intercambiar el orden de un equipo por ID' })
+    @ApiResponse({
+      status: 200,
+      description: 'Devuelve el equipo con el orden',
+      type: EquipoDTO,
+    })
+    @ApiResponse({
+      status: 404,
+      description: 'No se encuentra el equipo',
+    })
+    async cambiarOrden(
+      @Query('id') id: number,
+      @Query('direccion') direccion: 'asc' | 'desc'
+    ): Promise<{ message: string }> {
+      await this.equipoService.intercambiarOrden(+id, direccion);
+      return { message: `Orden intercambiado con éxito (movido ${direccion === 'asc' ? 'arriba' : 'abajo'})` };
+    }
+    
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar un equipo existente' }) // Descripción de la operación
   @ApiConsumes('multipart/form-data') // Indica que el endpoint consume FormData
@@ -189,6 +226,7 @@ export class EquipoController {
     }
   }
 
+  
   
   // Endpoint para obtener todos los equipos de una temporada ordenados por 'orden'
   /*@Get('temporada/:idTemporada')

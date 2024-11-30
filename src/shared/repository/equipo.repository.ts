@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from './base.repository';
 import { TemporadaDTO } from '../dtos/temporada.dto';
-import { Repository } from 'typeorm';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggerService } from '../services/logger.service';
 import { EquipoDTO } from '../dtos/equipo.dto';
@@ -107,5 +107,92 @@ export class EquipoRepository extends BaseRepository<
 
     // Si no hay ningún valor, devuelve 1; de lo contrario, suma 1 al valor máximo encontrado
     return result.maxOrden ? result.maxOrden + 1 : 1;
-}
+  }
+
+
+  async intercambiarOrden(id: number, direccion: 'asc' | 'desc'): Promise<void> {
+    
+    // Obtener el elemento actual
+    const elementoActual = await this.repository.findOne({ where: { id } });
+    if (!elementoActual) {
+      throw new Error('Elemento no encontrado');
+    }
+  
+    // Configurar la búsqueda según la dirección
+    const where = direccion === 'asc' 
+      ? { orden: LessThan(elementoActual.orden) }
+      : { orden: MoreThan(elementoActual.orden) };
+    
+    // Obtener el elemento adyacente
+    const elementoAdyacente = await this.repository.findOne({
+      where,
+      order: { orden: direccion === 'asc' ? 'DESC' : 'ASC' }
+    });
+  
+    if (!elementoAdyacente) {
+      throw new Error(`No hay elemento ${direccion === 'asc' ? 'anterior' : 'siguiente'}`);
+    }
+  
+    // Intercambiar los valores de orden
+    const ordenTemporal = elementoActual.orden;
+    elementoActual.orden = elementoAdyacente.orden;
+    elementoAdyacente.orden = ordenTemporal;
+  
+    // Guardar los cambios
+    await this.repository.save([elementoActual, elementoAdyacente]);
+  }
+  
+  /*async intercambiarSiguienteOrden(id: number): Promise<void> {
+    //const equipoRepository = this.dataSource.getRepository(EquipoEntity);
+    
+    // Obtener el elemento actual
+    const elementoActual = await this.repository.findOne({ where: { id } });
+    if (!elementoActual) {
+      throw new Error('Elemento no encontrado');
+    }
+  
+    // Obtener el siguiente elemento
+    const elementoSiguiente = await this.repository.findOne({
+      where: { orden: MoreThan(elementoActual.orden) },
+      order: { orden: 'ASC' }
+    });
+    if (!elementoSiguiente) {
+      throw new Error('No hay elemento siguiente');
+    }
+  
+    // Intercambiar los valores de orden
+    const ordenTemporal = elementoActual.orden;
+    elementoActual.orden = elementoSiguiente.orden;
+    elementoSiguiente.orden = ordenTemporal;
+  
+    // Guardar los cambios
+    await this.repository.save([elementoActual, elementoSiguiente]);
+  }
+
+  async intercambiarOrdenArriba(id: number): Promise<void> {
+    const equipoRepository = this.dataSource.getRepository(EquipoEntity);
+    
+    // Obtener el elemento actual
+    const elementoActual = await equipoRepository.findOne({ where: { id } });
+    if (!elementoActual) {
+      throw new Error('Elemento no encontrado');
+    }
+  
+    // Obtener el elemento anterior
+    const elementoAnterior = await equipoRepository.findOne({
+      where: { orden: LessThan(elementoActual.orden) },
+      order: { orden: 'DESC' }
+    });
+    if (!elementoAnterior) {
+      throw new Error('No hay elemento anterior');
+    }
+  
+    // Intercambiar los valores de orden
+    const ordenTemporal = elementoActual.orden;
+    elementoActual.orden = elementoAnterior.orden;
+    elementoAnterior.orden = ordenTemporal;
+  
+    // Guardar los cambios
+    await equipoRepository.save([elementoActual, elementoAnterior]);
+  }*/
 }
