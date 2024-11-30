@@ -109,7 +109,7 @@ export class EquipoController {
     }
   }
 
- /* @Put('/cambiar-orden/:id')
+   @Put('/cambiar-orden/:id')
   @ApiOperation({ summary: 'Intercambiar el orden de un equipo por ID' })
   @ApiResponse({
     status: 200,
@@ -127,8 +127,8 @@ export class EquipoController {
   
     await this.equipoService.intercambiarOrden(id, direccion);
     return { message: `Orden intercambiado con éxito (movido ${direccion === 'asc' ? 'arriba' : 'abajo'})` };
-  }*/
-    @Put('/cambiar-orden')
+  }
+    /*@Put('/cambiar-orden')
     @ApiOperation({ summary: 'Intercambiar el orden de un equipo por ID' })
     @ApiResponse({
       status: 200,
@@ -145,8 +145,8 @@ export class EquipoController {
     ): Promise<{ message: string }> {
       await this.equipoService.intercambiarOrden(+id, direccion);
       return { message: `Orden intercambiado con éxito (movido ${direccion === 'asc' ? 'arriba' : 'abajo'})` };
-    }
-    
+    }*/
+
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar un equipo existente' }) // Descripción de la operación
   @ApiConsumes('multipart/form-data') // Indica que el endpoint consume FormData
