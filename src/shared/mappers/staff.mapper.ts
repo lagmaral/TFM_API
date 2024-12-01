@@ -1,18 +1,25 @@
 import { StaffEntity } from '../entities/staff.entity';
 import { StaffDTO } from '../dtos/staff.dto';
+import { ConfigurableService } from '../services/env.service';
 
 export class StaffMapper {
   static toEntity(staffDTO: StaffDTO): StaffEntity {
     const staff = new StaffEntity();
-    //staff.id = staffDTO.id;
+    staff.id = staffDTO.id;
     staff.telefono = staffDTO.telefono;
-    staff.internalkey = staffDTO.internalkey;
-    staff.foto = staffDTO.foto;
+    if (staffDTO.internalkey) {
+      staff.internalkey = staffDTO.internalkey
+          .toUpperCase()
+          .replaceAll(ConfigurableService.getURLStaffPath(), '')
+          .replaceAll('.JPG', '');
+    } else {
+      staff.internalkey  = ''; // O puedes asignar un valor por defecto si lo prefieres
+    }
     staff.admin = staffDTO.admin;
     staff.fechanacimiento = staffDTO.fechanacimiento;
-    staff.nombre = staffDTO.nombre;
-    staff.apellido1 = staffDTO.apellido1;
-    staff.apellido2 = staffDTO.apellido2;
+    staff.nombre = staffDTO.nombre.toUpperCase();
+    staff.apellido1 = staffDTO.apellido1.toUpperCase();
+    staff.apellido2 = staffDTO.apellido2.toUpperCase();
     return staff;
   }
 
@@ -21,7 +28,7 @@ export class StaffMapper {
     staffDTO.id = staff.id;
     staffDTO.telefono = staff.telefono;
     staffDTO.internalkey = staff.internalkey;
-    staffDTO.foto = staff.foto;
+    staffDTO.internalkey = ConfigurableService.getURLStaffPath()+staff.internalkey+'.JPG';
     staffDTO.admin = staff.admin;
     staffDTO.fechanacimiento = staff.fechanacimiento;
     staffDTO.nombre = staff.nombre;

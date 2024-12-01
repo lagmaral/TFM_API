@@ -10,10 +10,6 @@ export class StaffDTO extends BaseDTO {
   @Length(1, 50)
   internalkey: string;
 
-  @IsString()
-  @Length(0, 500)
-  foto?: string;
-
   @IsBoolean()
   admin: boolean;
 

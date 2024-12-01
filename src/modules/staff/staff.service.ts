@@ -26,7 +26,7 @@ export class StaffService {
 
   async newStaff(staffDTO: StaffDTO): Promise<StaffDTO> {
     // Calcular internalkey
-    const internalKey = this.calculateInternalKey(staffDTO.apellido1, staffDTO.apellido2,staffDTO.nombre,staffDTO.fechanacimiento);
+    const internalKey = UtilsService.calculateStaffInternalKey(staffDTO);
 
     // Verificar si ya existe un Staff con este internalKey
     const existingStaff = await this.staffRepository.repository.findOne({
@@ -44,7 +44,10 @@ export class StaffService {
   }
 
   async isAdminUser(input: UsuarioDTO): Promise<boolean> {
-    const internalKey = this.calculateInternalKey(input.apellido1, input.apellido2,input.nombre,input.fechanacimiento);
+
+    
+    //this.logger.log();
+    const internalKey = UtilsService.calculateUsuarioInternalKey(input);
     const existingStaff = await this.staffRepository.repository.findOne({
       where: { internalkey: internalKey },
     });
@@ -66,9 +69,8 @@ export class StaffService {
     if (!staff) {
       throw new NotFoundException('Miembro del staff no encontrado');
     }
-
     // 2. Verificar si el teléfono existe en la base de datos
-    const internalKey = this.calculateInternalKey(input.apellido1, input.apellido2,input.nombre,input.fechanacimiento);
+    const internalKey = UtilsService.calculateStaffInternalKey(input);
     const existingStaff = await this.staffRepository.repository.findOne({
       where: { internalkey: internalKey },
     });
@@ -90,19 +92,7 @@ export class StaffService {
     return await this.staffRepository.findById(id);
   }
 
-  // Método para calcular el internalkey
-  private calculateInternalKey(apellido1:string, apellido2:string, nombre:string, fechanacimiento:Date/*staffDTO: StaffDTO*/): string {
-    //const apellido1 = staffDTO.apellido1 || '';
-    //const apellido2 = staffDTO.apellido2 || '';
-    //const nombre = staffDTO.nombre || '';
 
-    // Obtener los primeros caracteres
-    const keyPart1 = apellido1.substring(0, 3).toLowerCase(); // Primeros 3 caracteres de apellido1
-    const keyPart2 = apellido2.substring(0, 3).toLowerCase(); // Primeros 3 caracteres de apellido2
-    const keyPart3 = nombre.substring(0, 2).toLowerCase(); // Primeros 2 caracteres del nombre
-    const formattedDate = this.formatBirthDate(new Date(/*staffDTO.*/fechanacimiento));
-    return `${keyPart1}${keyPart2}${keyPart3}${formattedDate}`; // Concatenar partes para formar el internalKey
-  }
 
   formatBirthDate(birthDate: Date | null | undefined): string {
     if (!birthDate) return '';

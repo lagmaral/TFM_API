@@ -8,9 +8,6 @@ export class StaffEntity extends BaseEntity {
   @Column({ length: 50, unique: true })
   internalkey: string;
 
-  @Column({ length: 500, nullable: true })
-  foto: string;
-
   @Column({
     type: "boolean",
     transformer: {

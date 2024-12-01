@@ -51,7 +51,6 @@ export class StaffController {
         id: { type: 'number' },
         telefono: { type: 'string' },
         internalkey: { type: 'string' },
-        foto: { type: 'string' },
         admin: { type: 'boolean' },
         fechanacimiento: { type: 'string', format: 'date' },
         nombre: { type: 'string' },
@@ -68,7 +67,7 @@ export class StaffController {
   @UseInterceptors(FileInterceptor('image', { // Cambié 'file' a 'image'
     storage: diskStorage({
       destination: (req, file, cb) => {
-        const uploadPath = join(ConfigurableService.getConfigPlayerPath());
+        const uploadPath = join(ConfigurableService.getConfigStaffPath());
         if (!existsSync(uploadPath)) {
           mkdirSync(uploadPath, { recursive: true });
         }
@@ -76,20 +75,13 @@ export class StaffController {
       },
       filename: (req, file, cb) => {
         const staffData: StaffDTO = req.body;
-        const newFileName = `${UtilsService.calculateInternalKey(staffData)}${extname(file.originalname)}`;
+        const newFileName = `${UtilsService.calculateStaffInternalKey(staffData)}${extname(file.originalname)}`.toUpperCase();
         cb(null, newFileName);
       },
     }),
   }))
   async newStaff(@Body() object: StaffDTO,@UploadedFile() file?: Express.Multer.File) { // Hacer el archivo opcional
-    // Si no se carga un archivo, simplemente continúa
-    if (!file) {
-      console.log('No se ha cargado ningún archivo.');
-    } else {
-      console.log(`Archivo cargado: ${file.filename}`);
-      console.log(`Ruta del archivo cargado: ${file.path}`);
-    }
-  
+    this.logger.log("NUEVO STAFF: ")+JSON.stringify(object);  
     // Intentar persistir el objeto en la base de datos
     try {
       const savedObject = await this.staffService.newStaff(object); // Método para guardar el objeto
@@ -137,7 +129,6 @@ export class StaffController {
       id: { type: 'number' },
       telefono: { type: 'string' },
       internalkey: { type: 'string' },
-      foto: { type: 'string' },
       admin: { type: 'boolean' },
       fechanacimiento: { type: 'string', format: 'date' },
       nombre: { type: 'string' },
@@ -154,7 +145,7 @@ export class StaffController {
 @UseInterceptors(FileInterceptor('image', { // Cambié 'file' a 'image'
   storage: diskStorage({
     destination: (req, file, cb) => {
-      const uploadPath = join(ConfigurableService.getConfigPlayerPath());
+      const uploadPath = join(ConfigurableService.getConfigStaffPath());
       if (!existsSync(uploadPath)) {
         mkdirSync(uploadPath, { recursive: true });
       }
@@ -162,7 +153,7 @@ export class StaffController {
     },
     filename: (req, file, cb) => {
       const staffData: StaffDTO = req.body;
-      const newFileName = `${UtilsService.calculateInternalKey(staffData)}${extname(file.originalname)}`;
+      const newFileName = `${UtilsService.calculateStaffInternalKey(staffData)}${extname(file.originalname)}`.toUpperCase();
       cb(null, newFileName);
     },
   }),

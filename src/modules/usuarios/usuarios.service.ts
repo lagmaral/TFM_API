@@ -124,6 +124,7 @@ export class UsuariosService {
     await this.usuarioRepository.update(user.id, { token });
 
     let dto = await this.usuarioRepository.findById(user.id);
+    
     dto = await this.isAdminUser(dto);
     return dto;
   }

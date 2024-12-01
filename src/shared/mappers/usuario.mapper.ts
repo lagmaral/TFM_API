@@ -10,9 +10,9 @@ export class UsuarioMapper {
     usuario.username = usuarioDTO.username;
     usuario.password = usuarioDTO.password;
     usuario.token = usuarioDTO.token;
-    usuario.nombre = usuarioDTO.nombre;
-    usuario.apellido1 = usuarioDTO.apellido1;
-    usuario.apellido2 = usuarioDTO.apellido2;
+    usuario.nombre = usuarioDTO.nombre?.toUpperCase() ?? usuarioDTO.nombre;
+    usuario.apellido1 = usuarioDTO.apellido1?.toUpperCase() ?? usuarioDTO.apellido1;
+    usuario.apellido2 = usuarioDTO.apellido2?.toUpperCase() ?? usuarioDTO.apellido2;
     usuario.fechanacimiento = usuarioDTO.fechanacimiento;
     return usuario;
   }
@@ -25,9 +25,9 @@ export class UsuarioMapper {
     usuarioDTO.username = usuario.username;
     usuarioDTO.password = usuario.password;
     usuarioDTO.token = usuario.token;
-    usuarioDTO.nombre = usuario.nombre;
-    usuarioDTO.apellido1 = usuario.apellido1;
-    usuarioDTO.apellido2 = usuario.apellido2;
+    usuarioDTO.nombre = usuario.nombre?.toUpperCase() ?? usuario.nombre;
+    usuarioDTO.apellido1 = usuario.apellido1?.toUpperCase() ?? usuario.apellido1;
+    usuarioDTO.apellido2 = usuario.apellido2?.toUpperCase() ?? usuario.apellido2;
     usuarioDTO.fechanacimiento = usuario.fechanacimiento;
     return usuarioDTO;
   }
