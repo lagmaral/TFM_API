@@ -7,6 +7,8 @@ import {
   Body,
   ConflictException,
   NotFoundException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { LoggerService } from 'src/shared/services/logger.service';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -105,8 +107,16 @@ export class UsuariosController {
     status: 401,
     description: 'Credenciales incorrectas',
   })
-  async doLogin(@Body() authDto: AuthDTO): Promise<UsuarioDTO> {
-    return await this.usuarioService.doLogin(authDto);
+  async doLogin(@Body() authDto: AuthDTO):Promise<UsuarioDTO | any> {
+    try{
+      return await this.usuarioService.doLogin(authDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException('Usuario no encontrado', HttpStatus.UNAUTHORIZED);
+      }
+      throw error; // Repropaga otros errores
+    }
+
   }
 
   @Post('doLogout/:username')

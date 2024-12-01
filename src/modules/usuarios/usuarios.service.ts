@@ -103,6 +103,7 @@ export class UsuariosService {
 
     // Si el usuario no existe, lanzar excepción
     if (!user) {
+
       throw new NotFoundException('Usuario no encontrado');
     }
 
@@ -112,6 +113,7 @@ export class UsuariosService {
       user.password,
     );
     if (!isPasswordValid) {
+
       throw new UnauthorizedException('Contraseña incorrecta');
     }
 
@@ -138,19 +140,17 @@ export class UsuariosService {
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
-
     // 2. Verificar si el teléfono existe en la base de datos
     const existingUserWithPhone = await this.usuarioRepository.findByPhone(input.telefono);
     if (existingUserWithPhone && existingUserWithPhone.id !== user.id) {
       throw new ConflictException('El número de teléfono ya está asociado a otro usuario');
     }
-
     // 3. Modificar el usuario con los nuevos datos
     // Si el teléfono es válido o no se modifica, se puede actualizar
     const updatedUser = UsuarioMapper.toEntity(input);
     updatedUser.id = user.id;  // Mantener el ID del usuario actual
     updatedUser.token = user.token;  // Mantener el mismo token si es necesario
-
+    updatedUser.password = this.hashPassword(input.password);
     // Actualiza la base de datos con los nuevos datos del usuario
     const savedUser = await this.usuarioRepository.update(user.id, updatedUser);
 
