@@ -90,7 +90,7 @@ export class EquipoController {
       },
       filename: (req, file, cb) => {
         const equipoData: EquipoDTO = req.body;
-        const newFileName = `${UtilsService.calculateTeamKey(equipoData)}${extname(file.originalname)}`;
+        const newFileName = `${UtilsService.calculateTeamKey(equipoData)}${extname(file.originalname)}`.toUpperCase();
         cb(null, newFileName);
       },
     }),
@@ -165,7 +165,7 @@ export class EquipoController {
       },
       filename: (req, file, cb) => {
         const equipoData: EquipoDTO = req.body;
-        const newFileName = `${UtilsService.calculateTeamKey(equipoData)}${extname(file.originalname)}`;
+        const newFileName = `${UtilsService.calculateTeamKey(equipoData)}${extname(file.originalname)}`.toUpperCase();
         cb(null, newFileName);
       },
     }),

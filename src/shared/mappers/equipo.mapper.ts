@@ -10,8 +10,8 @@ export class EquipoMapper {
  // equipo.id = equipoDTO.id; // Omite esto
     equipo.temporada = new TemporadaEntity();
     equipo.temporada.id = equipoDTO.idtemporada;
-    equipo.nombre = equipoDTO.nombre;
-    equipo.descripcion = equipoDTO.descripcion;
+    equipo.nombre = equipoDTO.nombre.toUpperCase();
+    equipo.descripcion = equipoDTO.descripcion.toUpperCase();
     equipo.orden = equipoDTO.orden;
     equipo.activo = equipoDTO.activo;
     if (equipoDTO.internalkey) {
@@ -31,11 +31,11 @@ export class EquipoMapper {
     equipoDTO.id = equipo.id;
     // Verificar si la propiedad temporada está definida antes de acceder a su id
     equipoDTO.idtemporada = equipo.temporada ? equipo.temporada.id : null;  // Si temporada es null o undefined, asignar null
-    equipoDTO.nombre = equipo.nombre;
-    equipoDTO.descripcion = equipo.descripcion;
+    equipoDTO.nombre = equipo.nombre.toUpperCase();
+    equipoDTO.descripcion = equipo.descripcion.toUpperCase();
     equipoDTO.orden = equipo.orden;
     equipoDTO.activo = equipo.activo;
-    equipoDTO.internalkey = ConfigurableService.getURLPlayersPath()+equipo.internalkey+'.jpg';
+    equipoDTO.internalkey = ConfigurableService.getURLPlayersPath()+equipo.internalkey+'.JPG';
     return equipoDTO;
   }
 }
