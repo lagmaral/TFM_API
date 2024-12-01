@@ -39,7 +39,7 @@ export class JugadorService {
   async findPaginated(
     filters: any,
     paginationDto: PaginationDto,
-  ): Promise<{ data: EquipoDTO[]; total: number }> {
+  ): Promise<{ data: JugadorDTO[]; total: number }> {
     const { page, limit } = paginationDto;
     this.logger.log('findPaginated'+JSON.stringify(paginationDto));
     const [result, total] = await this.jugadorRepository.findAndCount({
@@ -49,7 +49,7 @@ export class JugadorService {
     });
 
     return {
-      data: result.map((staff) => EquipoMapper.toDTO(staff)), // Map results to DTOs
+      data: result.map((staff) => JugadorMapper.toDTO(staff)), // Map results to DTOs
       total,
     };
   }
@@ -88,7 +88,7 @@ export class JugadorService {
   }
 
   async updatePlayer(id:number, dto: JugadorDTO): Promise<JugadorDTO> {
-
+  
     // 1. Comprobar si el usuario existe por el token
     const player = await this.jugadorRepository.findById(id);
     if (!player) {
@@ -100,26 +100,29 @@ export class JugadorService {
     const existingPlayer = await this.jugadorRepository.repository.findOne({
       where: { internalkey: internalKey },
     });
-    this.logger.log(dto.id+'-------')
+
     const numericId = Number(id);
-    this.logger.log(dto.id+'-------'+numericId+"-----------------"+existingPlayer.id)
+
     if (existingPlayer && existingPlayer.id !== numericId) {
       throw new ConflictException('Jugador ya existente'); // Lanza un error si ya existe
     }
     // 3. Modificar el usuario con los nuevos datos
     // Si el teléfono es válido o no se modifica, se puede actualizar
+
     const updatedPlayer = JugadorMapper.toEntity(dto);
+    
     updatedPlayer.id = updatedPlayer.id; // Mantener el ID del usuario actual
     updatedPlayer.internalkey = internalKey; // Mantener el mismo token si es necesario
+
     updatedPlayer.fechanacimiento = UtilsService.formatDateToPostgres(new Date(updatedPlayer.fechanacimiento));
     //this.logger.log("ANTES DE GUARDAR: "+JSON.stringify(updatedStaff));
     // Actualiza la base de datos con los nuevos datos del usuario
-    await this.jugadorRepository.update(dto.id, updatedPlayer);
+
+    await this.jugadorRepository.update(id, updatedPlayer);
 
     // Devuelve el DTO actualizado del usuario
     return await this.jugadorRepository.findById(dto.id);
-    
-    //return await this.equipoRepository.update(dto.id,dto);
+
   }
 
 

@@ -46,30 +46,38 @@ export class JugadorRepository extends BaseRepository<
       }
     
       const queryBuilder = this.repository.createQueryBuilder('jugador')
-      .innerJoin('jugador.posicion', 'posicion') // Realiza un JOIN con TemporadaEntity
-        //.where('temporada.activa = :activa', { activa: true }) // Filtra por temporada activa
-        .orderBy('jugador.apellido1', 'ASC')
-        .addOrderBy('jugador.apellido2', 'ASC')
-        .addOrderBy('jugador.nombre', 'ASC')
-        .skip(arg0.skip)
-        .take(arg0.take);
+      .leftJoinAndSelect('jugador.posicion', 'posicion')
+      .orderBy('jugador.apellido1', 'ASC')
+      .addOrderBy('jugador.apellido2', 'ASC')
+      .addOrderBy('jugador.nombre', 'ASC')
+      .skip(arg0.skip)
+      .take(arg0.take);
     
-      // Verifica si whereConditions tiene propiedades
-      if (Object.keys(whereConditions).length > 0) {
-        this.logger.log('APLICANDO WHERE ' + Object.keys(whereConditions).length);
+    if (Object.keys(whereConditions).length > 0) {
+      this.logger.log('APLICANDO WHERE ' + Object.keys(whereConditions).length);
     
-        // Construir condiciones LIKE
-        Object.keys(whereConditions).forEach((key) => {
-          const value = whereConditions[key];
-          if (value) { // Asegúrate de que el valor no sea nulo o vacío
+      Object.keys(whereConditions).forEach((key) => {
+        const value = whereConditions[key];
+        if (value !== undefined && value !== null) {
+          if (key === 'posicionId') {
+            queryBuilder.andWhere('posicion.id = :posicionId', { posicionId: value });
+          } else if (key === 'consentimiento'){//typeof value === 'boolean') {
+            // Manejo de campos booleanos
+            this.logger.log('consentimiento: '+value);
+            queryBuilder.andWhere(`jugador.${key} = :${key}`, { [key]: Boolean(value) });
+          } else if (typeof value === 'string') {
             queryBuilder.andWhere(`jugador.${key} LIKE :${key}`, { [key]: `%${value}%` });
+          } else {
+            // Para otros tipos de datos, usa una comparación exacta
+            queryBuilder.andWhere(`jugador.${key} = :${key}`, { [key]: value });
           }
-        });
-      } else {
-        this.logger.log('No se aplicó la cláusula WHERE porque no hay condiciones válidas.');
-      }
+        }
+      });
+    } else {
+      this.logger.log('No se aplicó la cláusula WHERE porque no hay condiciones válidas.');
+    }
     
-      const [items, count] = await queryBuilder.getManyAndCount();
+    const [items, count] = await queryBuilder.getManyAndCount();
     
       return [items, count];
   
@@ -80,4 +88,5 @@ export class JugadorRepository extends BaseRepository<
     const entity = await this.repository.save(jugador);
     return entity ? JugadorMapper.toDTO(entity) : null; // Transformar a DTO
   }
+
 }

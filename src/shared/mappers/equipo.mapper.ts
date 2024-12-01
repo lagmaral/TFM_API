@@ -32,7 +32,7 @@ export class EquipoMapper {
     // Verificar si la propiedad temporada está definida antes de acceder a su id
     equipoDTO.idtemporada = equipo.temporada ? equipo.temporada.id : null;  // Si temporada es null o undefined, asignar null
     equipoDTO.nombre = equipo.nombre.toUpperCase();
-    equipoDTO.descripcion = equipo.descripcion.toUpperCase();
+    equipoDTO.descripcion = equipo.descripcion?.toUpperCase() ?? equipo.descripcion;
     equipoDTO.orden = equipo.orden;
     equipoDTO.activo = equipo.activo;
     equipoDTO.internalkey = ConfigurableService.getURLPlayersPath()+equipo.internalkey+'.JPG';

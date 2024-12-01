@@ -24,9 +24,17 @@ export class JugadorMapper {
     //jugador.cuota = new CuotaEntity();
     //jugador.cuota.id = jugadorDTO.idcuota;
     jugador.consentimiento = jugadorDTO.consentimiento;
-    jugador.nombre = jugadorDTO.nombre.toUpperCase();
-    jugador.apellido1 = jugadorDTO.apellido1.toUpperCase();
-    jugador.apellido2 = jugadorDTO.apellido2.toUpperCase();
+    if (jugadorDTO.nombre !== undefined) {
+      jugador.nombre = jugadorDTO.nombre.toUpperCase();
+    }
+    
+    if (jugadorDTO.apellido1 !== undefined) {
+        jugador.apellido1 = jugadorDTO.apellido1.toUpperCase();
+    }
+    
+    if (jugadorDTO.apellido2 !== undefined) {
+        jugador.apellido2 = jugadorDTO.apellido2.toUpperCase();
+    }
 
     
     return jugador;
@@ -36,13 +44,20 @@ export class JugadorMapper {
     const jugadorDTO = new JugadorDTO();
     jugadorDTO.id = jugador.id;
     jugadorDTO.fechanacimiento = jugador.fechanacimiento;
-    jugadorDTO.idposicion = jugador.posicion ? jugador.posicion.id : null;  // Si temporada es null o undefined, asignar null
-    jugadorDTO.internalkey = ConfigurableService.getURLPlayersPath()+jugador.internalkey+'.jpg';
-    //jugadorDTO.idcuota = jugador.cuota ? jugador.cuota.id : null;  // Si temporada es null o undefined, asignar null
+    jugadorDTO.idposicion = jugador.posicion ? jugador.posicion.id : null;
+    
+    // Asegúrate de que posicion y su descripcion estén definidos
+    jugadorDTO.posicionDescription = 
+        jugador.posicion && jugador.posicion.descripcion 
+            ? jugador.posicion.descripcion.toUpperCase() 
+            : null;
+
+    jugadorDTO.internalkey = ConfigurableService.getURLPlayersPath() + jugador.internalkey + '.JPG';
     jugadorDTO.consentimiento = jugador.consentimiento;
     jugadorDTO.nombre = jugador.nombre;
     jugadorDTO.apellido1 = jugador.apellido1;
     jugadorDTO.apellido2 = jugador.apellido2;
+
     return jugadorDTO;
-  }
+}
 }

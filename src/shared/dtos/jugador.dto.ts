@@ -8,8 +8,8 @@ export class JugadorDTO extends BaseDTO {
   @IsNumber()
   idposicion: number;
 
-  @IsNumber()
-  idequipo: number;
+  @IsString()
+  posicionDescription: string;
 
   @IsString()
   @Length(1, 20)
