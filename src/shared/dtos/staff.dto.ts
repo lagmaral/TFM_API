@@ -1,5 +1,6 @@
 import { IsString, IsBoolean, Length, IsDate } from 'class-validator';
 import { BaseDTO } from './base.dto';
+import { EquipoStaffDTO } from './equipo-staff.dto';
 
 export class StaffDTO extends BaseDTO {
   @IsString()
@@ -27,4 +28,6 @@ export class StaffDTO extends BaseDTO {
   @IsString()
   @Length(0, 200)
   apellido2?: string;
+
+  equiposList : EquipoStaffDTO[];
 }

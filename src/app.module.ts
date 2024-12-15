@@ -18,6 +18,7 @@ import { PlantillaModule } from './modules/plantilla/plantilla.module';
 import { EquipoChatModule } from './modules/equipo-chat/equipo-chat.module';
 import { PosicionesModule } from './modules/posiciones/posiciones.module';
 import { JugadorModule } from './modules/jugador/jugador.module';
+import { CargoModule } from './modules/cargo/cargo.module';
 
 
 @Module({
@@ -25,7 +26,7 @@ import { JugadorModule } from './modules/jugador/jugador.module';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(ormconfig.options),
-
+    CargoModule,
     EquipoChatModule,
     EquipoModule,
     EquipoStaffModule,

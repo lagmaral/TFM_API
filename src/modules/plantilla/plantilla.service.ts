@@ -20,7 +20,6 @@ export class PlantillaService {
   async findTeamsByJugadorId(jugadorId: number): Promise<PlantillaDTO[]> {
     
     const object = await this.plantillaRepository.findTeamsByJugadorId(jugadorId);
-    this.logger.log('CASO 1,5 :'+JSON.stringify(object));
     return object;
   }
 
@@ -37,7 +36,6 @@ export class PlantillaService {
   }
       
   async deletePlayerTeamById(id: number): Promise<void> {
-    this.logger.log('ssssssssssssssssssssssssssssssssss '+id);
     await this.plantillaRepository.deletePlayerTeamById(id);
   }
 }

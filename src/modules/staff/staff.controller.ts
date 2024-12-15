@@ -12,6 +12,8 @@ import { existsSync, mkdirSync } from 'fs';
 import { extname, join } from 'path';
 import { diskStorage } from 'multer';
 import { UtilsService } from 'src/shared/services/util.service';
+import { CargoDTO } from 'src/shared/dtos/cargo.dto';
+import { EquipoStaffDTO } from 'src/shared/dtos/equipo-staff.dto';
 
 
 @ApiTags('staff') // Etiqueta para el grupo
@@ -96,6 +98,28 @@ export class StaffController {
     }
   }
 
+  @Post('/equipo')
+  @ApiOperation({ summary: 'Crear un nueva relacion stff equipo' })
+    @ApiBody({
+      type: EquipoStaffDTO,
+      description: 'Registra un nuevo usuario si el teléfono no existe',
+      required: true,
+    })
+    @ApiResponse({
+      status: 201,
+      description: 'Usuario registrado existosamente',
+      type: StaffDTO,
+    })
+  async newStaffTeam(@Body() object: EquipoStaffDTO): Promise<StaffDTO>  { // Hacer el archivo opcional
+    // Intentar persistir el objeto en la base de datos
+    try {
+      await this.staffService.newStaffTeam(object); // Método para guardar el objeto
+      return await this.staffService.findById(object.idstaff);
+    } catch (error) {
+      // Manejo de error si la persistencia falla
+      throw new Error('Error al guardar el objeto: ' + error.message);
+    }
+  }
 
       
   @Get(':id')
@@ -197,6 +221,38 @@ async updateStaff(@Param('id') id: number, @Body() object: StaffDTO, @UploadedFi
     }
   }
   
+  @Delete('/equipo/:id')
+  @ApiOperation({ summary: 'Elimina un staff team  existente' })
+  @ApiResponse({
+    status: 200,
+    description: 'Jugador team eliminado exitosamente',
+    type: StaffDTO,
+  })
+  async deleteStaffTeamById(@Param('id') id: number) {
+
+    // Intentar persistir el objeto en la base de datos
+    try {
+      await this.staffService.deleteStaffTeamById(id); // Método para guardar el objeto
+    } catch (error) {
+      // Manejo de error si la persistencia falla
+      throw new Error('Error al guardar el objeto: ' + error.message);
+    }
+  }  
+
+ @Get('/all/cargos')
+  @ApiOperation({ summary: 'Obtener todos los cargos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Devuelve todos los cargos',
+    type: CargoDTO,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encuentra el equipo',
+  })
+  async findAllCargos(): Promise<CargoDTO[]> {
+    return this.staffService.findAllCargos();
+  } 
 }
 
 

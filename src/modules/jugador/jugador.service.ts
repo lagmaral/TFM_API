@@ -37,9 +37,7 @@ export class JugadorService {
   async findById(id: number): Promise<JugadorDTO> {
 
     const jugadorDTO = await this.jugadorRepository.findById(id);
-    this.logger.log('CASO 1 :'+JSON.stringify(jugadorDTO));
     jugadorDTO.plantillaList = await this.plantillaService.findTeamsByJugadorId(id);
-    this.logger.log('CASO 2 :'+JSON.stringify(jugadorDTO));
     return jugadorDTO;
   }
 

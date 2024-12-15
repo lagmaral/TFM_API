@@ -12,12 +12,16 @@ import { LoggerService } from 'src/shared/services/logger.service';
 import { EquipoStaffService } from '../equipo-staff/equipo-staff.service';
 import { UsuarioDTO } from 'src/shared/dtos/usuario.dto';
 import { UtilsService } from 'src/shared/services/util.service';
+import { CargoService } from '../cargo/cargo.service';
+import { CargoDTO } from 'src/shared/dtos/cargo.dto';
+import { EquipoStaffDTO } from 'src/shared/dtos/equipo-staff.dto';
 
 
 @Injectable()
 export class StaffService {
   constructor(
     private staffRepository: StaffRepository,
+    private readonly cargoService: CargoService,
     private readonly equipoStaffService: EquipoStaffService,
     private readonly logger: LoggerService,
   ) {
@@ -60,7 +64,10 @@ export class StaffService {
   }
 
   async findById(id: number): Promise<StaffDTO> {
-    return await this.staffRepository.findById(id);
+    
+    const staffDTO = await this.staffRepository.findById(id);
+    staffDTO.equiposList = await this.equipoStaffService.findTeamsByStaffId(id);
+    return staffDTO;
   }
 
   async updateStaff(id: number, input: StaffDTO): Promise<StaffDTO> {
@@ -125,4 +132,16 @@ export class StaffService {
     await this.equipoStaffService.deleteEquipoStaffByStaffId(id);
     return await this.staffRepository.deleteById(id);
   }
+
+  async findAllCargos(): Promise<CargoDTO[]> {
+      return await this.cargoService.findAll();
+  }
+
+  async newStaffTeam(equipoStaffDTO: EquipoStaffDTO): Promise<EquipoStaffDTO> {
+      return await this.equipoStaffService.newStaffTeam(equipoStaffDTO);
+  }
+
+  async deleteStaffTeamById(id: number): Promise<void> {
+    await this.equipoStaffService.deleteStaffTeamById(id);
+  } 
 }
