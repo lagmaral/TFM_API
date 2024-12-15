@@ -38,5 +38,8 @@ export class JugadorEntity extends BaseEntity{
   @Column({ length: 200,  })
   apellido2: string;
 
+  @Column('text')
+  descripcion: string;
+
 
 }

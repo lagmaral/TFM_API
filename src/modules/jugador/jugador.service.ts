@@ -16,6 +16,7 @@ import { JugadorDTO } from 'src/shared/dtos/jugador.dto';
 import { JugadorMapper } from 'src/shared/mappers/jugador.mapper';
 import { getRepository } from 'typeorm';
 import { PosicionEntity } from 'src/shared/entities/posicion.entity';
+import { PlantillaDTO } from 'src/shared/dtos/plantilla.dto';
 //import config from 'src/ormconfig';
 //import { AppDataSource } from '../../shared/services/datasource.service';
 @Injectable()
@@ -26,6 +27,7 @@ export class JugadorService {
     private readonly equipoChatService: EquipoChatService,
     private readonly plantillaService: PlantillaService,
     private readonly temporadaService: TemporadaService,*/
+    private readonly plantillaService: PlantillaService,
     private readonly posicionesService: PosicionesService,
     private readonly logger: LoggerService,
   ) {
@@ -33,7 +35,12 @@ export class JugadorService {
   }
 
   async findById(id: number): Promise<JugadorDTO> {
-    return await this.jugadorRepository.findById(id);
+
+    const jugadorDTO = await this.jugadorRepository.findById(id);
+    this.logger.log('CASO 1 :'+JSON.stringify(jugadorDTO));
+    jugadorDTO.plantillaList = await this.plantillaService.findTeamsByJugadorId(id);
+    this.logger.log('CASO 2 :'+JSON.stringify(jugadorDTO));
+    return jugadorDTO;
   }
 
   async findPaginated(
@@ -54,6 +61,10 @@ export class JugadorService {
     };
   }
 
+
+  async newPlayerTeam(plantillaDTO: PlantillaDTO): Promise<PlantillaDTO> {
+    return await this.plantillaService.newPlayerTeam(plantillaDTO);
+  }
 
   async newPlayer(jugadorDTO: JugadorDTO): Promise<JugadorDTO> {
     // Calcular internalkey
@@ -82,10 +93,18 @@ export class JugadorService {
   async deletePlayer(id: number): Promise<boolean> {
     //await this.equipoChatService.deleteEquipoChatByTeamId(id);
     //await this.equipoStaffService.deleteEquipoStaffByTeamId(id);
-    //await this.plantillaService.deletePlantillaByTeamId(id);
+    await this.plantillaService.deletePlayerTeamByPlayerId(id)
     //TODO BORRAR DE PLANTILLA
     return this.jugadorRepository.deleteById(id);
   }
+
+  
+  async deletePlayerTeamById(id: number): Promise<boolean> {
+    
+    await this.plantillaService.deletePlayerTeamById(id)
+    return true;
+  }
+
 
   async updatePlayer(id:number, dto: JugadorDTO): Promise<JugadorDTO> {
   

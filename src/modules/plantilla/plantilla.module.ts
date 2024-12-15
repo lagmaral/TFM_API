@@ -11,3 +11,6 @@ import { PlantillaService } from './plantilla.service';
     exports: [PlantillaService,PlantillaRepository], // Exportar el servicio para que otros módulos puedan usarlo
   })
 export class PlantillaModule {}
+
+
+

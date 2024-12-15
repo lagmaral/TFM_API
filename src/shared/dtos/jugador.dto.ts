@@ -1,5 +1,6 @@
 import { IsString, IsBoolean, Length, IsNumber, IsDate } from 'class-validator';
 import { BaseDTO } from './base.dto';
+import { PlantillaDTO } from './plantilla.dto';
 
 export class JugadorDTO extends BaseDTO {
   @IsDate()
@@ -32,5 +33,10 @@ export class JugadorDTO extends BaseDTO {
   @IsString()
   @Length(3, 200)
   apellido2: string;
+
+  @IsString()
+  descripcion: string;
+
+  plantillaList : PlantillaDTO[];
 
 }

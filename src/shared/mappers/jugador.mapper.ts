@@ -35,7 +35,7 @@ export class JugadorMapper {
     if (jugadorDTO.apellido2 !== undefined) {
         jugador.apellido2 = jugadorDTO.apellido2.toUpperCase();
     }
-
+    jugador.descripcion = jugadorDTO.descripcion;
     
     return jugador;
   }
@@ -57,7 +57,7 @@ export class JugadorMapper {
     jugadorDTO.nombre = jugador.nombre;
     jugadorDTO.apellido1 = jugador.apellido1;
     jugadorDTO.apellido2 = jugador.apellido2;
-
+    jugadorDTO.descripcion = jugador.descripcion;
     return jugadorDTO;
 }
 }

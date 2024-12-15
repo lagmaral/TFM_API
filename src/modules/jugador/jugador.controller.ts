@@ -12,6 +12,7 @@ import { PaginationDto } from 'src/shared/dtos/pagination.dto';
 import { ConfigurableService } from 'src/shared/services/env.service';
 import { UtilsService } from 'src/shared/services/util.service';
 import { JugadorDTO } from 'src/shared/dtos/jugador.dto';
+import { PlantillaDTO } from 'src/shared/dtos/plantilla.dto';
 @ApiTags('jugador') // Etiqueta para el grupo
 @Controller('jugador')
 export class JugadorController {
@@ -72,6 +73,7 @@ export class JugadorController {
         nombre: { type: 'string' },
         apellido1: { type: 'string' },
         apellido2: { type: 'string' },
+        descripcion: { type: 'string' },
         consentimiento: { type: 'boolean' },
         fechanacimiento: { type: 'string', format: 'date' },
         idposicion: { type: 'number' },
@@ -114,6 +116,28 @@ export class JugadorController {
     }
   }
 
+  @Post('/plantilla')
+  @ApiOperation({ summary: 'Crear un nuevo jugador en equipo' })
+    @ApiBody({
+      type: PlantillaDTO,
+      description: 'Registra un nuevo usuario si el teléfono no existe',
+      required: true,
+    })
+    @ApiResponse({
+      status: 201,
+      description: 'Usuario registrado existosamente',
+      type: JugadorDTO,
+    })
+  async newJugadorTeam(@Body() object: PlantillaDTO): Promise<JugadorDTO>  { // Hacer el archivo opcional
+    // Intentar persistir el objeto en la base de datos
+    try {
+      await this.jugadorService.newPlayerTeam(object); // Método para guardar el objeto
+      return await this.jugadorService.findById(object.idjugador);
+    } catch (error) {
+      // Manejo de error si la persistencia falla
+      throw new Error('Error al guardar el objeto: ' + error.message);
+    }
+  }
 
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar un jugador existente' }) // Descripción de la operación
@@ -131,6 +155,7 @@ export class JugadorController {
         nombre: { type: 'string' },
         apellido1: { type: 'string' },
         apellido2: { type: 'string' },
+        descripcion: { type: 'string' },
         consentimiento: { type: 'boolean' },
         fechanacimiento: { type: 'string', format: 'date' },
         idposicion: { type: 'number' },
@@ -189,8 +214,24 @@ export class JugadorController {
     try {
       
       await this.jugadorService.deletePlayer(id); // Método para guardar el objeto
-  
- 
+    } catch (error) {
+      // Manejo de error si la persistencia falla
+      throw new Error('Error al guardar el objeto: ' + error.message);
+    }
+  }
+
+  @Delete('/plantilla/:id')
+  @ApiOperation({ summary: 'Elimina un jugador team  existente' })
+  @ApiResponse({
+    status: 200,
+    description: 'Jugador team eliminado exitosamente',
+    type: JugadorDTO,
+  })
+  async deletePlayerTeamById(@Param('id') id: number) {
+
+    // Intentar persistir el objeto en la base de datos
+    try {
+      await this.jugadorService.deletePlayerTeamById(id); // Método para guardar el objeto
     } catch (error) {
       // Manejo de error si la persistencia falla
       throw new Error('Error al guardar el objeto: ' + error.message);
