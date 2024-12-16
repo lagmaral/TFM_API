@@ -12,6 +12,7 @@ import { extname, join } from 'path';
 import { diskStorage } from 'multer';
 import { UtilsService } from 'src/shared/services/util.service';
 import { PosicionDTO } from 'src/shared/dtos/posicion.dto';
+import { ImageService } from 'src/shared/services/image.service';
 
 @ApiTags('equipo') // Etiqueta para el grupo
 @Controller('equipo')
@@ -19,6 +20,7 @@ export class EquipoController {
   constructor(
     private equipoService: EquipoService,
     private readonly logger: LoggerService,
+    private readonly imageService: ImageService
   ) {
     this.logger.setContext('EquipoController');
   }
@@ -98,11 +100,14 @@ export class EquipoController {
   async newTeam(@Body() object: EquipoDTO,@UploadedFile() file?: Express.Multer.File) { // Hacer el archivo opcional
     // Intentar persistir el objeto en la base de datos
     try {
+      // Procesar la imagen con el servicio
+      const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+
       const savedObject = await this.equipoService.newTeam(object); // Método para guardar el objeto
       return {
         msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-        additionalData: savedObject,
-        filePath: file ? file.path : null // Solo incluir la ruta si hay un archivo
+        sizes: Object.keys(processedImages), // small, medium, large
+        images: processedImages, // Buffers de las imágenes procesadas
       };
     } catch (error) {
       // Manejo de error si la persistencia falla
@@ -174,13 +179,15 @@ export class EquipoController {
   
     // Intentar persistir el objeto en la base de datos
     try {
-      this.logger.log(JSON.stringify(object));
+      // Procesar la imagen con el servicio
+      const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+
       const savedObject = await this.equipoService.updateTeam(object); // Método para guardar el objeto
   
       return {
         msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-        additionalData: savedObject,
-        filePath: file ? file.path : null // Solo incluir la ruta si hay un archivo
+        sizes: Object.keys(processedImages), // small, medium, large
+        images: processedImages, // Buffers de las imágenes procesadas
       };
     } catch (error) {
       // Manejo de error si la persistencia falla

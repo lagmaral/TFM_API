@@ -14,6 +14,7 @@ import { diskStorage } from 'multer';
 import { UtilsService } from 'src/shared/services/util.service';
 import { CargoDTO } from 'src/shared/dtos/cargo.dto';
 import { EquipoStaffDTO } from 'src/shared/dtos/equipo-staff.dto';
+import { ImageService } from 'src/shared/services/image.service';
 
 
 @ApiTags('staff') // Etiqueta para el grupo
@@ -23,6 +24,7 @@ export class StaffController {
   constructor(
     private staffService: StaffService,
     private readonly logger: LoggerService,
+    private readonly imageService: ImageService
   ) {
     this.logger.setContext('StaffController');
   }
@@ -86,11 +88,15 @@ export class StaffController {
     this.logger.log("NUEVO STAFF: ")+JSON.stringify(object);  
     // Intentar persistir el objeto en la base de datos
     try {
+      // Procesar la imagen con el servicio
+      const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigStaffPath(),file.filename);
+
       const savedObject = await this.staffService.newStaff(object); // Método para guardar el objeto
+
       return {
         msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-        additionalData: savedObject,
-        filePath: file ? file.path : null // Solo incluir la ruta si hay un archivo
+        sizes: Object.keys(processedImages), // small, medium, large
+        images: processedImages, // Buffers de las imágenes procesadas
       };
     } catch (error) {
       // Manejo de error si la persistencia falla
@@ -186,13 +192,13 @@ async updateStaff(@Param('id') id: number, @Body() object: StaffDTO, @UploadedFi
 
   // Intentar persistir el objeto en la base de datos
   try {
-    this.logger.log(JSON.stringify(object));
+    const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigStaffPath(),file.filename);
     const savedObject = await this.staffService.updateStaff(id, object); // Método para guardar el objeto
 
     return {
       msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-      additionalData: savedObject,
-      filePath: file ? file.path : null // Solo incluir la ruta si hay un archivo
+      sizes: Object.keys(processedImages), // small, medium, large
+      images: processedImages, // Buffers de las imágenes procesadas
     };
   } catch (error) {
     // Manejo de error si la persistencia falla

@@ -13,12 +13,14 @@ import { ConfigurableService } from 'src/shared/services/env.service';
 import { UtilsService } from 'src/shared/services/util.service';
 import { JugadorDTO } from 'src/shared/dtos/jugador.dto';
 import { PlantillaDTO } from 'src/shared/dtos/plantilla.dto';
+import { ImageService } from 'src/shared/services/image.service';
 @ApiTags('jugador') // Etiqueta para el grupo
 @Controller('jugador')
 export class JugadorController {
     constructor(
         private jugadorService: JugadorService,
         private readonly logger: LoggerService,
+        private readonly imageService: ImageService
       ) {
         this.logger.setContext('JugadorController');
       }
@@ -104,11 +106,14 @@ export class JugadorController {
   async newJugador(@Body() object: JugadorDTO,@UploadedFile() file?: Express.Multer.File) { // Hacer el archivo opcional
     // Intentar persistir el objeto en la base de datos
     try {
+      // Procesar la imagen con el servicio
+      const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+
       const savedObject = await this.jugadorService.newPlayer(object); // Método para guardar el objeto
       return {
         msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-        additionalData: savedObject,
-        filePath: file ? file.path : null // Solo incluir la ruta si hay un archivo
+        sizes: Object.keys(processedImages), // small, medium, large
+        images: processedImages, // Buffers de las imágenes procesadas
       };
     } catch (error) {
       // Manejo de error si la persistencia falla
@@ -187,13 +192,15 @@ export class JugadorController {
   
     // Intentar persistir el objeto en la base de datos
     try {
-      this.logger.log(JSON.stringify(object));
+      // Procesar la imagen con el servicio
+      const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+
       const savedObject = await this.jugadorService.updatePlayer(id,object); // Método para guardar el objeto
   
       return {
         msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-        additionalData: savedObject,
-        filePath: file ? file.path : null // Solo incluir la ruta si hay un archivo
+        sizes: Object.keys(processedImages), // small, medium, large
+        images: processedImages, // Buffers de las imágenes procesadas
       };
     } catch (error) {
       // Manejo de error si la persistencia falla

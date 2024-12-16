@@ -19,10 +19,11 @@ import { EquipoChatModule } from './modules/equipo-chat/equipo-chat.module';
 import { PosicionesModule } from './modules/posiciones/posiciones.module';
 import { JugadorModule } from './modules/jugador/jugador.module';
 import { CargoModule } from './modules/cargo/cargo.module';
+import { ImageService } from './shared/services/image.service';
 
 
 @Module({
-  providers: [AppService, LoggerService,ConfigurableService],
+  providers: [AppService, LoggerService,ConfigurableService,ImageService],
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(ormconfig.options),
@@ -44,7 +45,7 @@ import { CargoModule } from './modules/cargo/cargo.module';
   ],
   controllers: [AppController],
 
-  exports: [LoggerService,ConfigurableService],
+  exports: [LoggerService,ConfigurableService,ImageService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
