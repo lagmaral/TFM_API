@@ -10,8 +10,7 @@ export class StaffMapper {
     if (staffDTO.internalkey) {
       staff.internalkey = staffDTO.internalkey
           .toUpperCase()
-          .replaceAll(ConfigurableService.getURLStaffPath(), '')
-          .replaceAll('.JPG', '');
+          .replaceAll(ConfigurableService.getURLStaffPath(), '');
     } else {
       staff.internalkey  = ''; // O puedes asignar un valor por defecto si lo prefieres
     }
@@ -28,7 +27,7 @@ export class StaffMapper {
     staffDTO.id = staff.id;
     staffDTO.telefono = staff.telefono;
     staffDTO.internalkey = staff.internalkey;
-    staffDTO.internalkey = ConfigurableService.getURLStaffPath()+staff.internalkey+'.JPG';
+    staffDTO.internalkey = ConfigurableService.getURLStaffPath()+staff.internalkey;
     staffDTO.admin = staff.admin;
     staffDTO.fechanacimiento = staff.fechanacimiento;
     staffDTO.nombre = staff.nombre;

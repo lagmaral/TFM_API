@@ -27,7 +27,6 @@ export class ImageService {
     for (const [key, size] of Object.entries(sizes)) {
       const filename = `${baseName}-${size}.webp`; // Nombre con el tamaño
       const outputPath = path.join(outputDir, filename);
-      //const buffer = fs.readFileSync('tsest.JPG'); // Cambia 'input-image.jpg' por tu imagen de prueba
       const buffer = fs.readFileSync(pathText+"/"+originalFilename);
       await sharp(buffer)
         .resize(size) // Redimensionar a ancho específico

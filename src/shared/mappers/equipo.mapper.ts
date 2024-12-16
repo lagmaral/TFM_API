@@ -22,12 +22,10 @@ export class EquipoMapper {
     if (equipoDTO.internalkey) {
       equipo.internalkey = equipoDTO.internalkey
           .toUpperCase()
-          .replaceAll(ConfigurableService.getURLPlayersPath(), '')
-          .replaceAll('.JPG', '');
+          .replaceAll(ConfigurableService.getURLPlayersPath(), '');
     } else {
       equipo.internalkey  = ''; // O puedes asignar un valor por defecto si lo prefieres
     }
-    //equipo.internalkey = equipoDTO.internalkey.replaceAll(ConfigurableService.getURLPlayersPath(), '').replaceAll('.jpg', '');
     return equipo;
   }
 
@@ -44,7 +42,7 @@ export class EquipoMapper {
     }
     equipoDTO.orden = equipo.orden;
     equipoDTO.activo = equipo.activo;
-    equipoDTO.internalkey = ConfigurableService.getURLPlayersPath()+equipo.internalkey+'.JPG';
+    equipoDTO.internalkey = ConfigurableService.getURLPlayersPath()+equipo.internalkey;
     return equipoDTO;
   }
 }

@@ -15,14 +15,10 @@ export class JugadorMapper {
     if (jugadorDTO.internalkey) {
       jugador.internalkey = jugadorDTO.internalkey
           .toUpperCase()
-          .replaceAll(ConfigurableService.getURLPlayersPath(), '')
-          .replaceAll('.JPG', '');
+          .replaceAll(ConfigurableService.getURLPlayersPath(), '');
     } else {
       jugador.internalkey  = ''; // O puedes asignar un valor por defecto si lo prefieres
     }
-    //jugador.internalkey = jugadorDTO.internalkey.toUpperCase().replaceAll(ConfigurableService.getURLPlayersPath(), '').replaceAll('.JPG', '');
-    //jugador.cuota = new CuotaEntity();
-    //jugador.cuota.id = jugadorDTO.idcuota;
     jugador.consentimiento = jugadorDTO.consentimiento;
     if (jugadorDTO.nombre !== undefined) {
       jugador.nombre = jugadorDTO.nombre.toUpperCase();
@@ -52,7 +48,7 @@ export class JugadorMapper {
             ? jugador.posicion.descripcion.toUpperCase() 
             : null;
 
-    jugadorDTO.internalkey = ConfigurableService.getURLPlayersPath() + jugador.internalkey + '.JPG';
+    jugadorDTO.internalkey = ConfigurableService.getURLPlayersPath() + jugador.internalkey;
     jugadorDTO.consentimiento = jugador.consentimiento;
     jugadorDTO.nombre = jugador.nombre;
     jugadorDTO.apellido1 = jugador.apellido1;
