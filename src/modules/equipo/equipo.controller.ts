@@ -25,6 +25,8 @@ export class EquipoController {
     this.logger.setContext('EquipoController');
   }
 
+
+
   @Get('paginated')
   @ApiOperation({ summary: 'Obtener todos los equipos' })
   @ApiResponse({
@@ -56,6 +58,17 @@ export class EquipoController {
     return this.equipoService.findById(id);
   }
 
+  @Get('')
+  @ApiOperation({ summary: 'Obtener todos los equipos activos' })
+  @ApiResponse({
+    status: 200,
+    description: 'Devuelve todos los equipos activos de la temporada activa.',
+    type: [EquipoDTO],
+  })
+  async getAllActiveTeam(
+  ) {
+    return this.equipoService.findAllActiveTeams();
+  }
 
   @Post()
   @ApiOperation({ summary: 'Crear una nuevo equipo' })
@@ -100,19 +113,29 @@ export class EquipoController {
   async newTeam(@Body() object: EquipoDTO,@UploadedFile() file?: Express.Multer.File) { // Hacer el archivo opcional
     // Intentar persistir el objeto en la base de datos
     try {
-      // Procesar la imagen con el servicio
-      const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
 
-      const savedObject = await this.equipoService.newTeam(object); // Método para guardar el objeto
-      return {
-        msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-        sizes: Object.keys(processedImages), // small, medium, large
-        images: processedImages, // Buffers de las imágenes procesadas
-      };
+      // Procesar la imagen con el servicio
+      if(file){
+        const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+        const savedObject = await this.equipoService.newTeam(object); // Método para guardar el objeto
+        return {
+          msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+          sizes: Object.keys(processedImages), // small, medium, large
+          images: processedImages, // Buffers de las imágenes procesadas
+        };
+      }else{
+        const savedObject = await this.equipoService.newTeam(object); // Método para guardar el objeto
+        return {
+          msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+          sizes: null, // small, medium, large
+          images: null, // Buffers de las imágenes procesadas
+        };
+      }
     } catch (error) {
       // Manejo de error si la persistencia falla
       throw new Error('Error al guardar el objeto: ' + error.message);
     }
+
   }
 
    @Put('/cambiar-orden/:id')
@@ -180,15 +203,23 @@ export class EquipoController {
     // Intentar persistir el objeto en la base de datos
     try {
       // Procesar la imagen con el servicio
-      const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+      if(file){
+        const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+        const savedObject = await this.equipoService.updateTeam(object); // Método para guardar el objeto
+        return {
+          msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+          sizes: Object.keys(processedImages), // small, medium, large
+          images: processedImages, // Buffers de las imágenes procesadas
+        };
+      }else{
+        const savedObject = await this.equipoService.updateTeam(object); // Método para guardar el objeto
+        return {
+          msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+          sizes: null, // small, medium, large
+          images: null, // Buffers de las imágenes procesadas
+        };
+      }
 
-      const savedObject = await this.equipoService.updateTeam(object); // Método para guardar el objeto
-  
-      return {
-        msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-        sizes: Object.keys(processedImages), // small, medium, large
-        images: processedImages, // Buffers de las imágenes procesadas
-      };
     } catch (error) {
       // Manejo de error si la persistencia falla
       throw new Error('Error al guardar el objeto: ' + error.message);

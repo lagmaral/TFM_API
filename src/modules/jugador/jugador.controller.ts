@@ -107,14 +107,24 @@ export class JugadorController {
     // Intentar persistir el objeto en la base de datos
     try {
       // Procesar la imagen con el servicio
-      const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+      if(file){
+        const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+        const savedObject = await this.jugadorService.newPlayer(object); // Método para guardar el objeto
 
-      const savedObject = await this.jugadorService.newPlayer(object); // Método para guardar el objeto
-      return {
-        msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-        sizes: Object.keys(processedImages), // small, medium, large
-        images: processedImages, // Buffers de las imágenes procesadas
-      };
+        return {
+          msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+          sizes: Object.keys(processedImages), // small, medium, large
+          images: processedImages, // Buffers de las imágenes procesadas
+        };
+      }else{
+        const savedObject = await this.jugadorService.newPlayer(object); // Método para guardar el objeto
+        return {
+          msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+          sizes: null, // small, medium, large
+          images: null, // Buffers de las imágenes procesadas
+        };
+      }
+
     } catch (error) {
       // Manejo de error si la persistencia falla
       throw new Error('Error al guardar el objeto: ' + error.message);
@@ -193,19 +203,29 @@ export class JugadorController {
     // Intentar persistir el objeto en la base de datos
     try {
       // Procesar la imagen con el servicio
-      const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+      if(file){
+        const processedImages = await this.imageService.processAndSaveImage(ConfigurableService.getConfigPlayerPath(),file.filename);
+        const savedObject = await this.jugadorService.updatePlayer(id,object); // Método para guardar el objeto
+    
+        return {
+          msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+          sizes: Object.keys(processedImages), // small, medium, large
+          images: processedImages, // Buffers de las imágenes procesadas
+        };
+      }else{
+        const savedObject = await this.jugadorService.updatePlayer(id,object); // Método para guardar el objeto
+        return {
+          msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
+          sizes: null, // small, medium, large
+          images: null, // Buffers de las imágenes procesadas
+        };
+      }
 
-      const savedObject = await this.jugadorService.updatePlayer(id,object); // Método para guardar el objeto
-  
-      return {
-        msg: file ? `Archivo ${file.filename} cargado` : 'No se ha cargado ningún archivo.',
-        sizes: Object.keys(processedImages), // small, medium, large
-        images: processedImages, // Buffers de las imágenes procesadas
-      };
     } catch (error) {
       // Manejo de error si la persistencia falla
       throw new Error('Error al guardar el objeto: ' + error.message);
     }
+
   }                
 
   @Delete(':id')

@@ -30,6 +30,18 @@ export class EquipoRepository extends BaseRepository<
     return await super.findAllWithRelations(['temporada']); // Llamada al método findAll de la clase base
   }
 
+  async findAllActiveTeams(): Promise<EquipoDTO[]> {
+    const entities = await this.repository.find({
+      where: {
+        activo: true
+      },
+      order: {
+        orden: 'ASC'
+      }
+    });
+    return entities.map(EquipoMapper.toDTO); // Transformar a DTO
+  }
+
   async findById(id: number): Promise<EquipoDTO | null> {
     return await super.findByIdWithRelations(id, ['temporada']);
   }

@@ -61,6 +61,10 @@ export class EquipoService {
     return this.equipoRepository.deleteById(id);
   }
 
+  async findAllActiveTeams(): Promise<EquipoDTO[]> {
+    return this.equipoRepository.findAllActiveTeams();
+  }
+
   async findPaginated(
     filters: any,
     paginationDto: PaginationDto,
