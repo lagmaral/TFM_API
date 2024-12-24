@@ -13,6 +13,13 @@ import { diskStorage } from 'multer';
 import { UtilsService } from 'src/shared/services/util.service';
 import { PosicionDTO } from 'src/shared/dtos/posicion.dto';
 import { ImageService } from 'src/shared/services/image.service';
+import { StaffDTO } from 'src/shared/dtos/staff.dto';
+import { JugadorDTO } from 'src/shared/dtos/jugador.dto';
+import { EquipoStaffService } from '../equipo-staff/equipo-staff.service';
+import { JugadorService } from '../jugador/jugador.service';
+import { EquipoStaffDTO } from 'src/shared/dtos/equipo-staff.dto';
+import { PlantillaService } from '../plantilla/plantilla.service';
+import { PlantillaDTO } from 'src/shared/dtos/plantilla.dto';
 
 @ApiTags('equipo') // Etiqueta para el grupo
 @Controller('equipo')
@@ -20,7 +27,9 @@ export class EquipoController {
   constructor(
     private equipoService: EquipoService,
     private readonly logger: LoggerService,
-    private readonly imageService: ImageService
+    private imageService: ImageService,
+    private equipoStaffService: EquipoStaffService,
+    private plantillaService: PlantillaService,
   ) {
     this.logger.setContext('EquipoController');
   }
@@ -58,6 +67,29 @@ export class EquipoController {
     return this.equipoService.findById(id);
   }
 
+  @Get('/plantilla/:id')
+  @ApiOperation({ summary: 'Obtener un equipo por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Devuelve un equipo por su ID',
+    type: EquipoDTO,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No se encuentra el equipo',
+  })
+  async getPlantillaByTeamId(@Param('id') id: number): Promise<{equipo: EquipoDTO, staff: EquipoStaffDTO[], jugadores: PlantillaDTO[]}> {
+      this.logger.log('Fetching team, staff, and players by team id');
+      const equipo = await this.equipoService.findById(id);
+      const staff = await this.equipoStaffService.findStaffByTeamId(id);
+      const jugadores = await this.plantillaService.findPlayersByTeamId(id);    
+      return {
+        equipo,
+        staff,
+        jugadores
+      };
+    }
+    
   @Get('')
   @ApiOperation({ summary: 'Obtener todos los equipos activos' })
   @ApiResponse({

@@ -41,4 +41,8 @@ export class EquipoStaffService {
      async deleteStaffTeamById(id: number): Promise<void> {
        await this.equipoStaffRepository.deleteStaffTeamById(id);
      } 
+
+     async findStaffByTeamId(teamId: number): Promise<EquipoStaffDTO[]> {
+      return await this.equipoStaffRepository.findStaffByTeamId(teamId); 
+    }
 }

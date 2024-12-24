@@ -76,4 +76,15 @@ export class PlantillaRepository extends BaseRepository<
       id,
     });
   }
+
+  async findPlayersByTeamId(teamId: number): Promise<PlantillaDTO[]> {
+    const entities = await this.repository.find({
+      where: { equipo: { id: teamId } },
+      relations: ['equipo', 'jugador', 'jugador.posicion'],
+      order: {
+        dorsal:  'ASC'
+      }
+    });
+    return entities.map(PlantillaMapper.toDTO); // Transformar a DTO
+  }
 }

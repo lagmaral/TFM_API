@@ -38,4 +38,8 @@ export class PlantillaService {
   async deletePlayerTeamById(id: number): Promise<void> {
     await this.plantillaRepository.deletePlayerTeamById(id);
   }
+
+  async findPlayersByTeamId(teamId: number): Promise<PlantillaDTO[]> {
+    return this.plantillaRepository.findPlayersByTeamId(teamId);
+  }
 }

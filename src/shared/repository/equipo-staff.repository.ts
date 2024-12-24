@@ -57,6 +57,19 @@ export class EquipoStaffRepository extends BaseRepository<
     return entities.map(EquipoStaffMapper.toDTO); // Transformar a DTO
   }
 
+  async findStaffByTeamId(teamId: number): Promise<EquipoStaffDTO[]> {
+    const entities = await this.repository.find({
+      where: { equipo: { id: teamId } },
+      relations: ['equipo', 'staff', 'cargo'],
+      order: {
+        cargo: {
+          orden: 'ASC'
+        }
+      }
+    });
+    return entities.map(EquipoStaffMapper.toDTO); // Transformar a DTO
+  }
+
   async newStaffTeam(staffId: number, equipoId: number, cargoId:number): Promise<EquipoStaffDTO> {
     let staff = new EquipoStaffEntity();
     staff.staff = { id: staffId } as StaffEntity;
