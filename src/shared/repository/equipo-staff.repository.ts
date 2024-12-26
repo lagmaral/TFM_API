@@ -97,4 +97,17 @@ export class EquipoStaffRepository extends BaseRepository<
       id,
     });
   }  
+
+  async getEquiposByStaffTelefono(telefono: string): Promise<number[]> {
+    
+    const equipos = await this.repository
+      .createQueryBuilder('equipoStaff')
+      .innerJoinAndSelect('equipoStaff.staff', 'staff')
+      .innerJoinAndSelect('equipoStaff.equipo', 'equipo')
+      .where('staff.telefono = :telefono', { telefono })
+      .select('equipo.id', 'idEquipo') // Selecciona solo el id del equipo
+      .getRawMany(); // Obtiene un arreglo de resultados planos
+  
+    return equipos.map((equipo) => equipo.idEquipo);
+  }
 }

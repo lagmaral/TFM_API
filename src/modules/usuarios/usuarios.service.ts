@@ -13,11 +13,13 @@ import { JwtService } from '@nestjs/jwt/dist/jwt.service';
 import { AuthDTO } from 'src/shared/dtos/auth.dto';
 
 import { StaffService } from '../staff/staff.service';
+import { EquipoStaffService } from '../equipo-staff/equipo-staff.service';
 
 @Injectable()
 export class UsuariosService {
   constructor(
     private usuarioRepository: UsuarioRepository,
+    private equipoStaffService: EquipoStaffService,
     private staffService: StaffService,
     private readonly logger: LoggerService,
     private readonly jwtService: JwtService,
@@ -70,6 +72,7 @@ export class UsuariosService {
 
     let dto = await this.usuarioRepository.save(usuario);
     dto = await this.isAdminUser(dto);
+    dto.staffTeamIdist = await  this.equipoStaffService.getEquiposByStaffTelefono(dto.telefono);
     return dto;
   }
 
@@ -83,6 +86,8 @@ export class UsuariosService {
     //staffRepository
     let dto = await this.usuarioRepository.findById(existingUser.id);
     dto = await this.isAdminUser(dto);
+
+    dto.staffTeamIdist = await  this.equipoStaffService.getEquiposByStaffTelefono(dto.telefono);
     return dto;
   }
 
@@ -126,6 +131,7 @@ export class UsuariosService {
     let dto = await this.usuarioRepository.findById(user.id);
     
     dto = await this.isAdminUser(dto);
+    dto.staffTeamIdist = await  this.equipoStaffService.getEquiposByStaffTelefono(dto.telefono);
     return dto;
   }
 
@@ -134,6 +140,8 @@ export class UsuariosService {
     dto.isAdmin = await this.staffService.isAdminUser(dto);
     return dto;
   }
+
+
 
   async updateUser(token: string, input: UsuarioDTO): Promise<UsuarioDTO> {
     // 1. Comprobar si el usuario existe por el token

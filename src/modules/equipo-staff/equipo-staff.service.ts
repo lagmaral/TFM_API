@@ -45,4 +45,8 @@ export class EquipoStaffService {
      async findStaffByTeamId(teamId: number): Promise<EquipoStaffDTO[]> {
       return await this.equipoStaffRepository.findStaffByTeamId(teamId); 
     }
+
+    async getEquiposByStaffTelefono(telefono: string): Promise<number[]> {
+      return await this.equipoStaffRepository.getEquiposByStaffTelefono(telefono);
+    }
 }

@@ -8,11 +8,13 @@ import { UsuariosController } from './usuarios.controller';
 import { UsuariosService } from './usuarios.service';
 import { JwtModule } from '@nestjs/jwt';
 import { StaffModule } from '../staff/staff.module';
+import { EquipoStaffModule } from '../equipo-staff/equipo-staff.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UsuarioEntity]),
     StaffModule,
+    EquipoStaffModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'default_secret', // Usar el secreto desde una variable de entorno
       signOptions: { expiresIn: '30d' }, // Establecer la expiración en 30 días

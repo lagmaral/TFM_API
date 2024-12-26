@@ -39,4 +39,6 @@ export class UsuarioDTO extends BaseDTO {
 
   @IsBoolean()
   isAdmin:boolean = false;
+
+  staffTeamIdist : number[];
 }
