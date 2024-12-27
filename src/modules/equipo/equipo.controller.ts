@@ -20,6 +20,7 @@ import { JugadorService } from '../jugador/jugador.service';
 import { EquipoStaffDTO } from 'src/shared/dtos/equipo-staff.dto';
 import { PlantillaService } from '../plantilla/plantilla.service';
 import { PlantillaDTO } from 'src/shared/dtos/plantilla.dto';
+import { RivalDTO } from 'src/shared/dtos/rival.dto';
 
 @ApiTags('equipo') // Etiqueta para el grupo
 @Controller('equipo')
@@ -101,6 +102,8 @@ export class EquipoController {
   ) {
     return this.equipoService.findAllActiveTeams();
   }
+
+
 
   @Post()
   @ApiOperation({ summary: 'Crear una nuevo equipo' })
@@ -312,5 +315,14 @@ export class EquipoController {
     return this.equipoService.findAllPositions();
   }
 
-
+  @Get('/all/rivals')
+  @ApiOperation({ summary: 'Obtener todos los equipos rivales' })
+  @ApiResponse({
+    status: 200,
+    description: 'Devuelve todos los equipos rivales.',
+    type: [RivalDTO],
+  })
+  async findAllRivals(): Promise<RivalDTO[]> {
+    return this.equipoService.findAllRivals();
+  }
 }

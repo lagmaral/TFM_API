@@ -15,5 +15,9 @@ export function staticPaths(configService: ConfigService) {
        rootPath: join(configService.get<string>('UPLOAD_PATH')+configService.get<string>('PLAYERS_UPLOAD_PATH')),
       serveRoot: '/pauldarrak/photos/players',
     },
+    
+    /*app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+      prefix: '/uploads/',
+    });*/
   ];
 }

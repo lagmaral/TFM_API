@@ -11,11 +11,14 @@ import { TemporadaService } from '../temporada/temporada.service';
 import { UtilsService } from 'src/shared/services/util.service';
 import { PosicionesService } from '../posiciones/posiciones.service';
 import { PosicionDTO } from 'src/shared/dtos/posicion.dto';
+import { RivalRepository } from 'src/shared/repository/rival.repository';
+import { RivalDTO } from 'src/shared/dtos/rival.dto';
 
 @Injectable()
 export class EquipoService {
   constructor(
     private equipoRepository: EquipoRepository,
+    private rivalRepository: RivalRepository,
     private readonly equipoStaffService: EquipoStaffService,
     private readonly equipoChatService: EquipoChatService,
     private readonly plantillaService: PlantillaService,
@@ -92,6 +95,10 @@ export class EquipoService {
 
   async findAllPositions(): Promise<PosicionDTO[]> {
     return await this.posicionesService.findAll();
+  }
+
+  async findAllRivals(): Promise<RivalDTO[]> {
+    return await this.rivalRepository.findAll();
   }
   
 }

@@ -13,9 +13,12 @@ import { TemporadaModule } from '../temporada/temporada.module';
 import { PosicionesModule } from '../posiciones/posiciones.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ImageService } from 'src/shared/services/image.service';
+import { RivalMapper } from 'src/shared/mappers/rival.mapper';
+import { RivalRepository } from 'src/shared/repository/rival.repository';
+import { RivalEntity } from 'src/shared/entities/rival.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EquipoEntity]),
+  imports: [TypeOrmModule.forFeature([EquipoEntity,RivalEntity]),
   EquipoChatModule,EquipoStaffModule,PlantillaModule,TemporadaModule, PosicionesModule,
   MulterModule.register({
     limits: {
@@ -27,9 +30,11 @@ import { ImageService } from 'src/shared/services/image.service';
     EquipoService, // Servicio
     EquipoMapper, // Mapper
     EquipoRepository, // Repositorio (lo agregas aquí para que sea inyectado)
+    RivalMapper,
+    RivalRepository,
     LoggerService,
     ImageService,
   ],
-  exports: [EquipoService, EquipoRepository, LoggerService], // Si necesitas que TemporadaService esté disponible fuera de este módulo
+  exports: [EquipoService, EquipoRepository,RivalRepository, LoggerService], // Si necesitas que TemporadaService esté disponible fuera de este módulo
 })
 export class EquipoModule {}

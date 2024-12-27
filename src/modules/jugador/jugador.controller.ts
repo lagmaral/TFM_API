@@ -25,9 +25,6 @@ export class JugadorController {
         this.logger.setContext('JugadorController');
       }
 
-
-
-
   @Get('paginated')
   @ApiOperation({ summary: 'Obtener todos los jugadores' })
   @ApiResponse({

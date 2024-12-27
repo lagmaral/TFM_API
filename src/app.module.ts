@@ -20,6 +20,7 @@ import { PosicionesModule } from './modules/posiciones/posiciones.module';
 import { JugadorModule } from './modules/jugador/jugador.module';
 import { CargoModule } from './modules/cargo/cargo.module';
 import { ImageService } from './shared/services/image.service';
+import { PartidoModule } from './modules/partido/partido.module';
 
 
 @Module({
@@ -37,6 +38,7 @@ import { ImageService } from './shared/services/image.service';
     PosicionesModule,
     StaffModule,
     TemporadaModule,
+    PartidoModule,
     ServeStaticModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
