@@ -52,9 +52,18 @@ export class PartidoRepository extends BaseRepository<
     return entities.map(PartidoMapper.toDTO); // Transformar a DTO
   }
 
-  async createPartido(partidoData: PartidoDTO): Promise<PartidoDTO> {
-    const entity = await this.repository.save(partidoData);
-    return entity ? PartidoMapper.toDTO(entity) : null; // Transformar a DTO
+  async createPartido(partidoData: PartidoEntity): Promise<PartidoDTO> {
+   // Crea una nueva instancia de la entidad
+   const entity = this.repository.create(partidoData);
+    
+   // Guarda la nueva entidad en la base de datos
+   const savedEntity = await this.repository.save(entity);
+   
+   // Loguea la entidad guardada
+   this.logger.log(JSON.stringify(savedEntity));
+   
+   // Devuelve el DTO transformado
+   return savedEntity ? PartidoMapper.toDTO(savedEntity) : null; //
   }
 
   async updatePartido(id: number, partidoData: PartidoDTO): Promise<PartidoDTO> {

@@ -2,11 +2,16 @@ import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
 import { PartidoService } from './partido.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PartidoDTO } from 'src/shared/dtos/partido.dto';
+import { LoggerService } from 'src/shared/services/logger.service';
 
 @Controller('partido')
 export class PartidoController {
 
-    constructor(private readonly partidoService: PartidoService) {}
+    constructor(private readonly partidoService: PartidoService,
+          private readonly logger: LoggerService,
+    ) {
+      this.logger.setContext('PartidoController');
+    }
     
     @Get(':id')
   @ApiOperation({ summary: 'Obtener un partido por ID' })
@@ -53,6 +58,7 @@ export class PartidoController {
   @ApiOperation({ summary: 'Crear un nuevo partido' })
   @ApiResponse({ status: 201, description: 'Partido creado exitosamente', type: PartidoDTO })
   async createPartido(@Body() createPartidoDTO: PartidoDTO): Promise<PartidoDTO> {
+    this.logger.log(JSON.stringify(createPartidoDTO));
     return this.partidoService.createPartido(createPartidoDTO);
   }
 

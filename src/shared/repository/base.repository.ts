@@ -38,6 +38,8 @@ export abstract class BaseRepository<Entity, OutputDTO, InputDTO> {
     return entity ? this.toDTOMapper(entity) : null; // Transformar a DTO
   }
 
+
+
   async save(data: InputDTO): Promise<OutputDTO> {
     let entity = this.toEntityMapper(data); // Transformar DTO -> Entity
     entity = this.repository.create(entity);

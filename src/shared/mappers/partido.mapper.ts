@@ -12,15 +12,15 @@ export class PartidoMapper {
     partido.amistoso = partidoDTO.amistoso;
     partido.fecha = partidoDTO.fecha;
     partido.campo = partidoDTO.campo;
-    partido.descripcion = partidoDTO.descripcion;
-    partido.municipio = partidoDTO.municipio;
+    //partido.descripcion = partidoDTO.descripcion;
+    //partido.municipio = partidoDTO.municipio;
     partido.coordenadas = partidoDTO.coordenadas;
     partido.rival = partidoDTO.rival;
     partido.local = partidoDTO.local;
     partido.goleslocal = partidoDTO.goleslocal;
     partido.golesvisitante = partidoDTO.golesvisitante;
-    partido.delegado = new PersonaEntity();
-    partido.delegado.id = partidoDTO.iddelegado;
+    //partido.delegado = new PersonaEntity();
+    //partido.delegado.id = partidoDTO.iddelegado;
     return partido;
   }
 
@@ -31,14 +31,14 @@ export class PartidoMapper {
     partidoDTO.amistoso = partido.amistoso;
     partidoDTO.fecha = partido.fecha;
     partidoDTO.campo = partido.campo;
-    partidoDTO.descripcion = partido.descripcion;
-    partidoDTO.municipio = partido.municipio;
+    //partidoDTO.descripcion = partido.descripcion;
+    //partidoDTO.municipio = partido.municipio;
     partidoDTO.coordenadas = partido.coordenadas;
     partidoDTO.rival = partido.rival;
     partidoDTO.local = partido.local;
     partidoDTO.goleslocal = partido.goleslocal;
     partidoDTO.golesvisitante = partido.golesvisitante;
-    partidoDTO.iddelegado = partido.delegado ? partido.delegado.id : null;  // Si temporada es null o undefined, asignar null
+    //partidoDTO.iddelegado = partido.delegado ? partido.delegado.id : null;  // Si temporada es null o undefined, asignar null
     return partidoDTO;
   }
 }

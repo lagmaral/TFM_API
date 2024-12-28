@@ -18,11 +18,11 @@ export class PartidoEntity extends BaseEntity {
   @Column({ length: 100 })
   campo: string;
 
-  @Column('text')
+ /* @Column('text')
   descripcion: string;
 
   @Column({ length: 50 })
-  municipio: string;
+  municipio: string;*/
 
   @Column({ length: 100 })
   coordenadas: string;
@@ -39,7 +39,7 @@ export class PartidoEntity extends BaseEntity {
   @Column('smallint', { nullable: true })
   golesvisitante: number;
 
-  @ManyToOne(() => PersonaEntity)
+  /*@ManyToOne(() => PersonaEntity)
   @JoinColumn({ name: 'iddelegado' })
-  delegado: PersonaEntity;
+  delegado: PersonaEntity;*/
 }

@@ -108,7 +108,17 @@ export class EquipoRepository extends BaseRepository<
     return await super.deleteById(id);
     
   }
-
+  
+  async findByIdWithRelationsEntity(
+    id: number,
+    relations: string[] = [],
+  ): Promise<EquipoEntity | null> {
+    const entity = await this.repository.findOne({
+      where: { id } as any,
+      relations,
+    });
+    return entity; // Devolver la entidad directamente
+  }
 
   async getNextOrdenValueUsingQueryBuilder(): Promise<number> {
     const result = await this.repository.createQueryBuilder('equipo')
