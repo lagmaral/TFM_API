@@ -21,6 +21,10 @@ export class ConfigurableService {
     return "/pauldarrak/photos/staff/";
   }
 
+  static getURLEscudosPath(): string{
+    return "/pauldarrak/uploads/";
+  }
+
   static getURLPlayersPath(): string{
     return "/pauldarrak/photos/players/";
   }

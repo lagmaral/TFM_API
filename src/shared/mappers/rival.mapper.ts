@@ -16,7 +16,8 @@ export class RivalMapper {
   static toDTO(input: RivalEntity): RivalDTO {
     const dto = new RivalDTO();
     dto.id = input.id;
-    dto.nombre = input.nombre; 
+    if(input.nombre)
+      dto.nombre = input.nombre.toUpperCase(); 
     dto.image = input.image;
     return dto;
   }

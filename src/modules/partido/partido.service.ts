@@ -4,6 +4,7 @@ import { PartidoEntity } from 'src/shared/entities/partido.entity';
 import { PartidoMapper } from 'src/shared/mappers/partido.mapper';
 import { EquipoRepository } from 'src/shared/repository/equipo.repository';
 import { PartidoRepository } from 'src/shared/repository/partido.repository';
+import { RivalRepository } from 'src/shared/repository/rival.repository';
 import { LoggerService } from 'src/shared/services/logger.service';
 
 @Injectable()
@@ -11,13 +12,14 @@ export class PartidoService {
   constructor(
     private partidoRepository: PartidoRepository,
     private equipoRepository:EquipoRepository,
+    private rivalRepository:RivalRepository,
     private readonly logger: LoggerService,
   ) {
     logger.setContext('PartidoService');
   }
 
   async findById(id: number): Promise<PartidoDTO> {
-    return this.partidoRepository.findById(id);
+    return this.partidoRepository.getOneById(id);
   }
 
   async findLastSevenDays(): Promise<PartidoDTO[]> {
@@ -29,11 +31,9 @@ export class PartidoService {
   }
 
   async createPartido(partidoData: PartidoDTO): Promise<PartidoDTO> {
-    //this.logger.log(JSON.stringify(partidoData));
     const match = PartidoMapper.toEntity(partidoData);
-    //this.logger.log('xx' +JSON.stringify(match));
     match.equipo = await this.equipoRepository.findByIdWithRelationsEntity(partidoData.idequipo, ['temporada']);
-    //this.logger.log('xx2' +JSON.stringify(match));
+    match.rival = await this.rivalRepository.findById(partidoData.idrival);
     return this.partidoRepository.createPartido(match);
   }
 
@@ -42,7 +42,10 @@ export class PartidoService {
     if (!partido) {
       throw new NotFoundException(`Partido con ID ${id} no encontrado`);
     }
-    return this.partidoRepository.updatePartido(id, partidoData);
+    const match = PartidoMapper.toEntity(partidoData);
+    match.equipo = await this.equipoRepository.findByIdWithRelationsEntity(partidoData.idequipo, ['temporada']);
+    match.rival = await this.rivalRepository.findById(partidoData.idrival);
+    return this.partidoRepository.updatePartido(id, match);
   }
 
   async deletePartido(id: number): Promise<void> {

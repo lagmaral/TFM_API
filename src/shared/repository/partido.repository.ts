@@ -25,7 +25,7 @@ export class PartidoRepository extends BaseRepository<
 
 
   async getOneById(id: number): Promise<PartidoDTO> {
-    const entity = await this.repository.findOne({ where: { id } });
+    const entity = await this.repository.findOne({ where: { id },relations: ['equipo', 'rival'] });
     return entity ? PartidoMapper.toDTO(entity) : null; // Transformar a DTO
   }
 
@@ -47,7 +47,10 @@ export class PartidoRepository extends BaseRepository<
   async findAllByTeamId(teamId: number): Promise<PartidoDTO[]> {
     const entities = await this.repository.find({
         where: { equipo: { id: teamId } },
-        relations: ['equipo']
+        relations: ['equipo','rival'],
+        order: {
+          fecha: 'DESC', // Ordenar por fecha descendente
+        },
       });
     return entities.map(PartidoMapper.toDTO); // Transformar a DTO
   }
@@ -66,9 +69,9 @@ export class PartidoRepository extends BaseRepository<
    return savedEntity ? PartidoMapper.toDTO(savedEntity) : null; //
   }
 
-  async updatePartido(id: number, partidoData: PartidoDTO): Promise<PartidoDTO> {
+  async updatePartido(id: number, partidoData: PartidoEntity): Promise<PartidoDTO> {
     await this.repository.update(id,partidoData);
-    return this.getOneById(id);
+    return await this.getOneById(id);
   }
 
   async deletePartido(id: number): Promise<boolean> {
@@ -76,7 +79,8 @@ export class PartidoRepository extends BaseRepository<
   }
 
   async updateGoals(id: number, goleslocal: number, golesvisitante: number): Promise<PartidoDTO> {
-    return await this.update(id, { goleslocal, golesvisitante });
+    await this.update(id, { goleslocal, golesvisitante });
+    return await this.getOneById(id);
   }
   
 }

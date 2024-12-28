@@ -1,9 +1,18 @@
 import { IsString, IsBoolean, Length, IsNumber, IsDate } from 'class-validator';
 import { BaseDTO } from './base.dto';
+import { RivalDTO } from './rival.dto';
+import { EquipoDTO } from './equipo.dto';
+import { ConfigurableService } from '../services/env.service';
 
 export class PartidoDTO extends BaseDTO {
    @IsNumber()
   idequipo: number;
+  equipo: EquipoDTO;
+  equipoicon:string = ConfigurableService.getURLEscudosPath()+'00.png';
+  
+  @IsNumber()
+  idrival: number;
+  rival: RivalDTO;
 
   @IsBoolean()
   amistoso: boolean;
@@ -25,10 +34,6 @@ export class PartidoDTO extends BaseDTO {
   @IsString()
   @Length(1, 100)
   coordenadas: string;
-
-  @IsString()
-  @Length(1, 200)
-  rival: string;
 
   @IsBoolean()
   local: boolean;

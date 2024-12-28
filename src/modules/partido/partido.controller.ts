@@ -58,7 +58,6 @@ export class PartidoController {
   @ApiOperation({ summary: 'Crear un nuevo partido' })
   @ApiResponse({ status: 201, description: 'Partido creado exitosamente', type: PartidoDTO })
   async createPartido(@Body() createPartidoDTO: PartidoDTO): Promise<PartidoDTO> {
-    this.logger.log(JSON.stringify(createPartidoDTO));
     return this.partidoService.createPartido(createPartidoDTO);
   }
 
