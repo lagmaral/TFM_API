@@ -22,8 +22,8 @@ export class PartidoService {
     return this.partidoRepository.getOneById(id);
   }
 
-  async findLastSevenDays(): Promise<PartidoDTO[]> {
-    return this.partidoRepository.findLastSevenDays();
+  async findMonthRange(): Promise<PartidoDTO[]> {
+    return this.partidoRepository.findMonthRange();
   }
 
   async findAllByTeamId(teamId: number): Promise<PartidoDTO[]> {

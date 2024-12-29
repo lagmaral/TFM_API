@@ -29,19 +29,22 @@ export class PartidoRepository extends BaseRepository<
     return entity ? PartidoMapper.toDTO(entity) : null; // Transformar a DTO
   }
 
-  async findLastSevenDays(): Promise<PartidoDTO[]> {
+  async findMonthRange(): Promise<PartidoDTO[]> {
     const today = new Date();
-    const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-    
+    const fifteenDaysAgo = new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000);
+    const fifteenDaysLater = new Date(today.getTime() + 15 * 24 * 60 * 60 * 1000);
+  
     const entities = await this.repository.find({
       where: {
-        fecha: Between(sevenDaysAgo, today)
+        fecha: Between(fifteenDaysAgo, fifteenDaysLater)
       },
+      relations: ['equipo', 'rival'],
       order: {
         fecha: 'DESC'
       }
     });
-    return entities.map(PartidoMapper.toDTO); // Transformar a DTO
+  
+    return entities.map(PartidoMapper.toDTO);
   }
 
   async findAllByTeamId(teamId: number): Promise<PartidoDTO[]> {

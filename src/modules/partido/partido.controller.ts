@@ -29,14 +29,14 @@ export class PartidoController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los partidos de los 7 últimos días' })
+  @ApiOperation({ summary: 'Obtener todos los partidos de los 30 últimos días' })
   @ApiResponse({
     status: 200,
-    description: 'Obtener todos los partidos de los 7 últimos días',
+    description: 'Obtener todos los partidos de los 30 últimos días',
     type: [PartidoDTO],
   })
-  async findLastSevenDays(): Promise<PartidoDTO[]> {
-    return this.partidoService.findLastSevenDays();
+  async findMonthRange(): Promise<PartidoDTO[]> {
+    return this.partidoService.findMonthRange();
   }
 
   @Get('/team/:id')
