@@ -58,9 +58,9 @@ export class EquipoRepository extends BaseRepository<
   }
 
   async findAndCount(arg0: { where: any; skip: number; take: number; }): Promise<[any[], number]> {
-    this.logger.log('SKIP: '+arg0.skip);
-    this.logger.log('TAKE: '+arg0.take);
-    this.logger.log('WHERE: '+JSON.stringify(arg0.where));
+    //this.logger.log('SKIP: '+arg0.skip);
+    //this.logger.log('TAKE: '+arg0.take);
+    //this.logger.log('WHERE: '+JSON.stringify(arg0.where));
     let whereConditions = {};
 
       // Verifica si arg0.where es un string y trata de parsearlo
