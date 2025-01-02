@@ -71,6 +71,7 @@ export class StaffService {
   }
 
   async updateStaff(id: number, input: StaffDTO): Promise<StaffDTO> {
+    this.logger.log(id+" - "+JSON.stringify(input))
     // 1. Comprobar si el usuario existe por el token
     const staff = await this.staffRepository.findById(id);
     if (!staff) {
@@ -87,13 +88,18 @@ export class StaffService {
     }
     // 3. Modificar el usuario con los nuevos datos
     // Si el teléfono es válido o no se modifica, se puede actualizar
-    const updatedStaff = StaffMapper.toEntity(input);
-    updatedStaff.id = updatedStaff.id; // Mantener el ID del usuario actual
-    updatedStaff.internalkey = internalKey; // Mantener el mismo token si es necesario
-    updatedStaff.fechanacimiento = UtilsService.formatDateToPostgres(new Date(updatedStaff.fechanacimiento));
-    //this.logger.log("ANTES DE GUARDAR: "+JSON.stringify(updatedStaff));
-    // Actualiza la base de datos con los nuevos datos del usuario
-    await this.staffRepository.update(id, updatedStaff);
+   /* const updatedStaff = StaffMapper.toEntity(input);
+    this.logger.log(id+" - "+JSON.stringify(updatedStaff))
+    updatedStaff.id = updatedStaff.id; // Mantener el ID del usuario actual*/
+    staff.internalkey = internalKey; // Mantener el mismo token si es necesario
+    staff.fechanacimiento = UtilsService.formatDateToPostgres(new Date(input.fechanacimiento));
+    staff.telefono = input.telefono;
+    staff.admin = input.admin;
+    staff.nombre = input.nombre;
+    staff.apellido1 = input.apellido1;
+    staff.apellido2 = input.apellido2;
+    // Actualiza la base de datos con los nuevos datos del usuario*/
+    await this.staffRepository.update(id, staff);
 
     // Devuelve el DTO actualizado del usuario
     return await this.staffRepository.findById(id);
