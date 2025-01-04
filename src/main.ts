@@ -35,7 +35,7 @@ async function bootstrap() {
       showRequestDuration: true,
     },
   });
-
-  await app.listen(3000);
+  await app.listen(8447);
+  //await app.listen(3000);
 }
 bootstrap();
